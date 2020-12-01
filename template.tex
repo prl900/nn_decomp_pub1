@@ -135,20 +135,31 @@ The dynamics of the Earth surface follow defining a lower dimensional space.  he
 PCA decomposes a matrix into its principal components or eigenvectors and eigenvalues presenting them in decreasing order of identif the eigenvectors of 
 For the case of remote sensing images, the PCA decomposition of series of images captured through time typically shows a decrease in the eigenvalues in which the largest part of the original variance can be explained with only a few components. This fact has been used to compress and also filter out noise in the images coming from clouds and other atmospheric effects.
 
-When applying PCA to remote sensing images it is required to filter out the noise in the images, which are typically contaminated with clouds and other atmospheric effects. If noise is not removed, most of the variability in the images will be and PCA will capture it in its components. One of the main drawbacks of applying PCA is its inability to work with missing values.
+When applying PCA to remote sensing images it is required to filter out the noise in the images, which are typically contaminated with clouds and other atmospheric effects. If noise is not removed, most of the variability in the images will be and PCA will capture it in its components. One of the main drawbacks of applying PCA is its inability to work with missing values. Some alternative implementations of Singular Value Decomposition that can work with missing data have been proposed but it is a common practice to assign these values a fixed value or apply interpolation techniques to the data previous to calculating its PCA.
+
+In this work we explore an alternative methodology to PCA based on neural networks that can work with missing values. This methodology is tested using Sentinel 2 data and its results are compared to PCA using interpolated data for the missing values. 
+
+PCA using interpolated data. Cloud detection 
+
+\subsection{Data}
+
+To carry out the experiments in this work we used Sentinel 2 data from the Digital Earth Australia dataset \citep{dhu2017digital}. We considered an area of 7000 km^2 around the Australian Capital Territory for the years 2018 and 2019. Spectrally, we used seven bands, three visible channels, two near infra-red and two short wave infrared, corresponding to bands (2, 3, 4, 8, 8a, 11, 12) in the original dataset.
+
+The data used the 10 metres resoltion and the rest of the bands where sampled to this resThe data was divided in tiles of 4 squared kilometers and the whole temporal extent for applying the decomposition methodology indidually. The whole region region was  
 
 
-\section{HEADING}
+\section{Methodology}
+
+
+There are many different possibilities of arranging the data before performing PCA or decomposing. 
+
+
+\subsubsection{Experimental Results}
 TEXT
 
 
-\subsection{HEADING}
+\subsubsection{Discussion}
 TEXT
-
-
-\subsubsection{HEADING}
-TEXT
-
 
 \conclusions  %% \conclusions[modified heading if necessary]
 TEXT
