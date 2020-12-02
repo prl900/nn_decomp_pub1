@@ -98,7 +98,13 @@ To carry out the experiments in this work we used data from the Copernicus Senti
 
 From the DEA dataset we extracted a 7000 km\textsuperscript{2} area around the Australian Capital Territory region for the years 2018 and 2019. Spectrally, we chose a subset of seven bands: three in the visible channels, two in the near infra-red and two in the short wave infrared, corresponding to bands (2, 3, 4, 8, 8a, 11, 12) in the original dataset. Bands 8a, 11 and 12 have nominal resolutions of 20 metres and were upsampled using nearest neighbour into 10 metres, to match the other band's resolution.
 
-The data was then split using regular tiles of 4 squared kilometers each one comprising the whole temporal extent. Figure aaaa contains a representation of the region and extent of each tile.
+The data was then split using regular tiles of 4 squared kilometers each one comprising the whole temporal extent. Figure \ref{dataset} contains a representation of the region and extent of each tile.
+
+\begin{figure}%
+    \includegraphics[width=14cm]{fig1.png}
+    \caption{Region of the ACT with extents of the Sentinel 2 tiles.}%
+    \label{dataset}%
+\end{figure}
 
 \subsection{Clouds and shadows filtering}
 Remote sesing images are 
