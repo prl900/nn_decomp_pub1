@@ -11,54 +11,6 @@
 %% 2-column papers and discussion papers
 \documentclass[essd, manuscript]{copernicus}
 
-
-
-%% Journal abbreviations (please use the same for discussion papers and final revised papers)
-
-
-% Advances in Geosciences (adgeo)
-% Advances in Radio Science (ars)
-% Advances in Science and Research (asr)
-% Advances in Statistical Climatology, Meteorology and Oceanography (ascmo)
-% Annales Geophysicae (angeo)
-% Archives Animal Breeding (aab)
-% ASTRA Proceedings (ap)
-% Atmospheric Chemistry and Physics (acp)
-% Atmospheric Measurement Techniques (amt)
-% Biogeosciences (bg)
-% Climate of the Past (cp)
-% DEUQUA Special Publications (deuquasp)
-% Drinking Water Engineering and Science (dwes)
-% Earth Surface Dynamics (esurf)
-% Earth System Dynamics (esd)
-% Earth System Science Data (essd)
-% E&G Quaternary Science Journal (egqsj)
-% European Journal of Mineralogy (ejm)
-% Fossil Record (fr)
-% Geochronology (gchron)
-% Geographica Helvetica (gh)
-% Geoscience Communication (gc)
-% Geoscientific Instrumentation, Methods and Data Systems (gi)
-% Geoscientific Model Development (gmd)
-% History of Geo- and Space Sciences (hgss)
-% Hydrology and Earth System Sciences (hess)
-% Journal of Micropalaeontology (jm)
-% Journal of Sensors and Sensor Systems (jsss)
-% Mechanical Sciences (ms)
-% Natural Hazards and Earth System Sciences (nhess)
-% Nonlinear Processes in Geophysics (npg)
-% Ocean Science (os)
-% Primate Biology (pb)
-% Proceedings of the International Association of Hydrological Sciences (piahs)
-% Scientific Drilling (sd)
-% SOIL (soil)
-% Solid Earth (se)
-% The Cryosphere (tc)
-% Weather and Climate Dynamics (wcd)
-% Web Ecology (we)
-% Wind Energy Science (wes)
-
-
 %% \usepackage commands included in the copernicus.cls:
 %\usepackage[german, english]{babel}
 %\usepackage{tabularx}
@@ -98,10 +50,6 @@
 
 \runningauthor{TEXT}
 
-
-
-
-
 \received{}
 \pubdiscuss{} %% only important for two-stage journals
 \revised{}
@@ -110,20 +58,15 @@
 
 %% These dates will be inserted by Copernicus Publications during the typesetting process.
 
-
 \firstpage{1}
 
 \maketitle
-
-
 
 \begin{abstract}
 TEXT
 \end{abstract}
 
-
 \copyrightstatement{TEXT}
-
 
 \introduction  %% \introduction[modified heading if necessary]
 
@@ -141,12 +84,6 @@ In this work we explore an alternative methodology to PCA based on neural networ
 
 PCA using interpolated data. Cloud detection 
 
-\subsection{Data}
-
-To carry out the experiments in this work we used Sentinel 2 data from the Digital Earth Australia dataset \citep{dhu2017digital}. We considered an area of 7000 km^2 around the Australian Capital Territory for the years 2018 and 2019. Spectrally, we used seven bands, three visible channels, two near infra-red and two short wave infrared, corresponding to bands (2, 3, 4, 8, 8a, 11, 12) in the original dataset.
-
-The data used the 10 metres resoltion and the rest of the bands where sampled to this resThe data was divided in tiles of 4 squared kilometers and the whole temporal extent for applying the decomposition methodology indidually. The whole region region was  
-
 
 \section{Methodology}
 
@@ -154,11 +91,24 @@ The data used the 10 metres resoltion and the rest of the bands where sampled to
 There are many different possibilities of arranging the data before performing PCA or decomposing. 
 
 
-\subsubsection{Experimental Results}
+\section{Data}
+
+\subsection{Tiling}
+To carry out the experiments in this work we used data from the Copernicus Sentinel-2 mission \citep{drusch2012sentinel}. A constellation of two polar-orbiting satellites placed in the same sun-synchronous orbit scans the Earth with a combined revisit period 10 days and spatial resolutions that range between 10 and 60 metres. Digital Earth Australia (DEA) \citep{dhu2017digital} offers Sentinel 2 for Australia adding further processing to the data, such as correction for atmospheric and terrain effects. DEA data is reprojected into Albers equal area and we maintained the images in this projection to carry out the experiments in this work.
+
+From the DEA dataset we extracted a 7000 km\textsuperscript{2} area around the Australian Capital Territory region for the years 2018 and 2019. Spectrally, we chose a subset of seven bands: three in the visible channels, two in the near infra-red and two in the short wave infrared, corresponding to bands (2, 3, 4, 8, 8a, 11, 12) in the original dataset. Bands 8a, 11 and 12 have nominal resolutions of 20 metres and were upsampled using nearest neighbour into 10 metres, to match the other band's resolution.
+
+The data was then split using regular tiles of 4 squared kilometers each one comprising the whole temporal extent. Figure aaaa contains a representation of the region and extent of each tile.
+
+\subsection{Clouds and shadows filtering}
+Remote sesing images are 
+
+
+\section{Experimental Results}
 TEXT
 
 
-\subsubsection{Discussion}
+\section{Discussion}
 TEXT
 
 \conclusions  %% \conclusions[modified heading if necessary]
