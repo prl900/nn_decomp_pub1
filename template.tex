@@ -70,6 +70,8 @@ TEXT
 
 \introduction  %% \introduction[modified heading if necessary]
 
+From an algebraic perspective, the variability of the Earth's surface, as captured by remote sensing, can be described using a low rank representation of the original data. This fact has been extensively explored and exploited in the literature to create compressed and remove the noise from satellite images. 
+
 Changes in reflectance values or local textures that are separable from changes caused by other factors such as differences in atmospheric conditions, illumination and viewing angles, and soil moistures \citep{deng2008pca}.
 
 The natural processes Earth surface 
@@ -97,7 +99,7 @@ The Copernicus Sentinel-2 mission \citep{drusch2012sentinel} is a constellation 
 
 To run the experiments in this work we extracted from DEA a 7000 km\textsuperscript{2} area around the Australian Capital Territory region comprising the years 2018 and 2019. Spectrally, we chose a subset of seven bands: three in the visible channels, two in the near infra-red and two in the short wave infrared, corresponding to bands (2, 3, 4, 8, 8a, 11, 12) in the original dataset. Bands 8a, 11 and 12 have nominal resolutions of 20 metres and were upsampled into 10 metres using nearest neighbour, to achieve a homogeneous resolution across all bands.
 
-The data was then split using regular tiles of 4 square kilometers each, comprising the whole temporal extent. Figure \ref{dataset} shows a map of the region and the extent of each tile within a 16 by 23 grid. Using a contiguous region, as opposed to sparse isolated tiles, ensures the dataset contains a fair mix of full and partial tiles due to tile boundaries. The objective is to consider a dataset that is maneageable to carry out the experiments but that is representative of the configuration variability of the original Sentinel-2 data. The results of this work should be easily reproduced for any other location.
+The data was then split using regular tiles of 4 square kilometers each, comprising the whole temporal extent. Figure \ref{dataset} shows a map of the region and the extent of each tile within a 16 by 23 grid. Using a contiguous region, as opposed to sparse isolated tiles, ensures the dataset contains a fair mix of tiles that are fully and partially filled with image data, due to random intersections with the original Sentinel-2 scenes. The objective is to consider a dataset that is maneageable to carry out the experiments but that is representative of the original data. The results of this work should be easily reproduced for any other location.
 
 \begin{figure}%
     \includegraphics[width=14cm]{fig1.png}
@@ -105,18 +107,20 @@ The data was then split using regular tiles of 4 square kilometers each, compris
     \label{dataset}%
 \end{figure}
 
-Each tile, as described previously, can be represented using a cube formed stacking 400 by 400 pixel images along the temporal dimension. In time, the number of images ranges between 85 and 130 depending on the position of the tile. The data was finally stored stacking each spectral band along the temporal dimension. Figure \ref{dataset_detail} represents the one of the tiles in the dataset, where images corresponding to different satellite acquisitions are stacked in the vertical dimension. On the left, the true colour composite is represented. On the right, the seven spectral bands are stacked together along the time dimension representing the final dataset used in the experiments. 
+Each tile, as described previously, can be represented using a cube formed stacking 400 by 400 pixel images along the temporal dimension. In time, the number of images ranges between 85 and 130 depending on the position of the tile. The data was stored stacking each of the seven spectral bands in the same time dimension. Figure \ref{dataset_detail} represents the tile in the top-left corner in the dataset, with images corresponding to different dates stacked along the vertical dimension. On the left, the true colour composite is represented. On the right, the seven spectral bands are stacked together along the time dimension, as used in the experiments. 
 
 \begin{figure}%
     {{\includegraphics[width=8cm]{fig2a.png} }}%
     {{\includegraphics[width=8cm]{fig2b.png} }}%
-    \caption{Tile corresponding to the top-left corner in the dataset (a) true colour representation, (b) multispectral stacked data}%
+    \caption{Tile corresponding to the top-left corner in the dataset (a) temporal stack of true colour images, (b) temporal stack of spectral images}%
     \label{dataset_detail}%
 \end{figure}
 
+\subsection{Filtering clouds and shadows}
+The atmosphere standing between the satellite and the Earth's surface modifies the spectral response coming from the ground. Clouds, haze and other atmospheric meteors affect ground measurements and can be considered noise contaminating the signal coming from the Earth. For our experiments, we want to capture the variability coming from the ground and then, we need to remove all the other sources of variability in the data.
 
-\subsection{Clouds and shadows filtering}
-Remote sesing images are 
+Several methodologies for removing clouds from Sentinel-2 images have been proposed \citep{}. These methodologies can be divided into individual and temporal. For a comprehensive review and performance comparisons we refer readers to \citep{}. Atmospheric processes normally have a much higher temporal variability than the ones occurring on the Earth's surface. Temporal based methods exploit this difference in the variability to detect outliers that can be attributed to atmospheric processes. Temporal based methods achieve better accuracy when compared to but have the incovenient that they are more compute intensive and sometimes cannot be used for new images, as they require an ovelapping window to work. 
+
 
 
 \section{Experimental Results and Discussion}
