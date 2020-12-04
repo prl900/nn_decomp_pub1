@@ -93,13 +93,11 @@ There are many different possibilities of arranging the data before performing P
 
 \section{Data}
 
-\subsection{Tiling}
-To carry out the experiments in this work we used data from the Copernicus Sentinel-2 mission \citep{drusch2012sentinel}. A constellation of two polar-orbiting satellites placed in the same sun-synchronous orbit scans the Earth with a combined revisit period 10 days and spatial resolutions that range between 10 and 60 metres. Digital Earth Australia (DEA) \citep{dhu2017digital} offers Sentinel 2 for Australia adding further processing to the data, such as correction for atmospheric and terrain effects. DEA data is reprojected into Albers equal area and we maintained the images in this projection to carry out the experiments in this work.
+The Copernicus Sentinel-2 mission \citep{drusch2012sentinel} is a constellation of two polar-orbiting satellites Sentinel-2A and Sentinel-2B launched on 23 June 2015 and 7 March April 3, 2014 and April 25 respectively. These satellites are placed in the same sun-synchronous orbit and scan the Earth with a combined revisit period of 5 days and spatial resolutions that range between 10 and 60 metres. Digital Earth Australia (DEA) \citep{dhu2017digital} is a platform that contains Sentinel-2 data for Australia. DEA facilitates access and enhances quality of the data by adding further processing, such as correction for atmospheric and terrain effects. DEA data is stored using the Albers equal area projection for ensuring pixel size remains constant independent of its location.
 
-From the DEA dataset we extracted a 7000 km\textsuperscript{2} area around the Australian Capital Territory region for the years 2018 and 2019. Spectrally, we chose a subset of seven bands: three in the visible channels, two in the near infra-red and two in the short wave infrared, corresponding to bands (2, 3, 4, 8, 8a, 11, 12) in the original dataset. Bands 8a, 11 and 12 have nominal resolutions of 20 metres and were upsampled using nearest neighbour into 10 metres, to match the other band's resolution.
+To run the experiments in this work we extracted from DEA a 7000 km\textsuperscript{2} area around the Australian Capital Territory region comprising the years 2018 and 2019. Spectrally, we chose a subset of seven bands: three in the visible channels, two in the near infra-red and two in the short wave infrared, corresponding to bands (2, 3, 4, 8, 8a, 11, 12) in the original dataset. Bands 8a, 11 and 12 have nominal resolutions of 20 metres and were upsampled into 10 metres using nearest neighbour, to achieve a homogeneous resolution across all bands.
 
-The data was then split using regular tiles of 4 squared kilometers each, comprising the whole temporal extent. Figure \ref{dataset} contains a representation of the region and extent of each tile within a 16 by 23 grid. This continuous region contains a fair mix of full and partial tiles due to boundaries in the original Sentinel 2 scenes. This should give a good idea of the algorithm's general performance compared to hand picked tiles over sparse areas.
-
+The data was then split using regular tiles of 4 square kilometers each, comprising the whole temporal extent. Figure \ref{dataset} shows a map of the region and the extent of each tile within a 16 by 23 grid. Using a contiguous region, as opposed to sparse isolated tiles, ensures the dataset contains a fair mix of full and partial tiles due to tile boundaries. The objective is to consider a dataset that is maneageable to carry out the experiments but that is representative of the configuration variability of the original Sentinel-2 data. The results of this work should be easily reproduced for any other location.
 
 \begin{figure}%
     \includegraphics[width=14cm]{fig1.png}
@@ -109,15 +107,20 @@ The data was then split using regular tiles of 4 squared kilometers each, compri
 
 
 
+
 \subsection{Clouds and shadows filtering}
 Remote sesing images are 
 
 
-\section{Experimental Results}
+\section{Experimental Results and Discussion}
 TEXT
 
 
-\section{Discussion}
+\section{Conclusion}
+In this paper, we evaluated the application of NNs to decompose remote sensing data in the presence of missing values. The methodology was evaluated to Sentinel-2 time series data for the Australian Capital Territory region. The NN-based methodology achieved better compression ratios and accuracy at interpolating missing values when compared to PCA. We demonstrate that relaxing the orthogonality constraints of PCA improves compression for time series of satellite multispectral data.
+
+Additional studies are planned to evaluate the effect of non-linearities and convolution operations in the network. Another avenue for exploration is the introduction of constraints that lead to sparsity to enhance compression and improve interpretability of the results. 
+
 TEXT
 
 \conclusions  %% \conclusions[modified heading if necessary]
