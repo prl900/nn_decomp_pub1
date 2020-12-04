@@ -105,14 +105,14 @@ The data was then split using regular tiles of 4 square kilometers each, compris
     \label{dataset}%
 \end{figure}
 
-Each tile, as previously described, can be represented with a cube formed by stacking 400 by 400 pixel images along the temporal dimension. In time, the number of images ranges between 85 and 130 depending on the position. The data is finally stored stacking each spectral band along the temporal dimension. Figure \ref{dataset_detail} represents the the stacked time series using a true colour representation and Fieach scene s in the spatial dimensions and 
+Each tile, as described previously, can be represented using a cube formed stacking 400 by 400 pixel images along the temporal dimension. In time, the number of images ranges between 85 and 130 depending on the position of the tile. The data was finally stored stacking each spectral band along the temporal dimension. Figure \ref{dataset_detail} represents the one of the tiles in the dataset, where images corresponding to different satellite acquisitions are stacked in the vertical dimension. On the left, the true colour composite is represented. On the right, the seven spectral bands are stacked together along the time dimension representing the final dataset used in the experiments. 
 
 \begin{figure}%
     \centering
     \subfloat[Precision scores]{{\includegraphics[width=8cm]{figure2a.png} }}%
     \quad
     \subfloat[Recall scores]{{\includegraphics[width=8cm]{figure2b.png} }}%
-    \caption{Comparison between (a) precision, (b) recall and (c) F1 scores for the three regions evaluated using a precipitation threshold of 0.2 mm/h}%
+    \caption{Tile corresponding to the top-left corner in the dataset (a) true colour representation, (b) multispectral stacked data}%
     \label{dataset_detail}%
 \end{figure}
 
