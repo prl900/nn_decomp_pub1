@@ -117,9 +117,33 @@ Each tile, as described previously, can be represented using a cube formed stack
 \end{figure}
 
 \subsection{Filtering clouds and shadows}
-The atmosphere standing between the satellite and the Earth's surface modifies the spectral response coming from the ground. Clouds, haze and other atmospheric meteors affect ground measurements and can be considered noise contaminating the signal coming from the Earth. For our experiments, we want to capture the variability coming from the ground and then, we need to remove all the other sources of variability in the data.
+The atmosphere, standing between the satellite and the Earth's surface, modifies the spectral response coming from the ground. Clouds, haze and other atmospheric meteors affect ground measurements and can be considered as noise contaminating the signal coming from the Earth. For our experiments, we want to capture the variability coming from the ground and then, we need to remove all the other sources of variability in the data.
 
-Several methodologies for removing clouds from Sentinel-2 images have been proposed \citep{}. These methodologies can be divided into individual and temporal. For a comprehensive review and performance comparisons we refer readers to \citep{}. Atmospheric processes normally have a much higher temporal variability than the ones occurring on the Earth's surface. Temporal based methods exploit this difference in the variability to detect outliers that can be attributed to atmospheric processes. Temporal based methods achieve better accuracy when compared to but have the inconvenient that they are more compute intensive and sometimes cannot be used for new images, as they require an overlapping window to work. 
+Several methodologies for removing clouds from Sentinel-2 images have been proposed \citep{louis2016sentinel,hagolle2017maja,qiu2019fmask}. These methodologies can be classified into single-date and multitemporal algorithms \citep{}. For a comprehensive review and performance comparisons we refer readers to \citep{zhu2018cloud}. Multitemporal algorithms are generally more accurate when compared to single-date ones, but have the inconvenient of being more difficult to implement and compute intensive.
+
+In this work we propose a new simple multitemporal methodology to detect pixels containing clouds and shadows. This methodology defines a series of dynamic thresholds using the for each pixel for determining if pixels corresponds to either clear sky, cloud or shadow categories. This methodology employs two Sentinel-2 spectral bands, blue (490 nm) and nir **?** (865 nm) and is easy to implement and efficient to run compared to other multi-temporal methods \citep{frantz2015enhancing,zhu2018automatica}.
+
+The proposed methodology can be described with the following algorithm:
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{Write here the result }
+ initialization\;
+ \While{While condition}{
+  instructions\;
+  \eIf{condition}{
+   instructions1\;
+   instructions2\;
+   }{
+   instructions3\;
+  }
+ }
+ \caption{How to write algorithms}
+\end{algorithm}
+
+
+
+Atmospheric processes normally have a much higher temporal variability than the ones occurring on the Earth's surface. Temporal based methods exploit this difference in the variability to detect outliers that can be attributed to atmospheric processes. Temporal based methods  
 
 
 
