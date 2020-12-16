@@ -27,24 +27,23 @@
 
 \begin{document}
 
-\title{TEXT}
+\title{Neural networks for inputting missing values and compressing time series of multispectral remote sensing data.}
 
 
 % \Author[affil]{given_name}{surname}
 
-\Author[]{}{}
-\Author[]{}{}
-\Author[]{}{}
+\Author[1]{Pablo R.}{Larraondo}
+\Author[1]{Albert I. J. M.}{van Dijk}
+\Author[1]{Marta}{Yebra}
 
-\affil[]{ADDRESS}
-\affil[]{ADDRESS}
+\affil[1]{Fenner School of Environment and Society. Australian National University. Canberra, Australia}
 
 %% The [] brackets identify the author with the corresponding affiliation. 1, 2, 3, etc. should be inserted.
 
 %% If an author is deceased, please add a further affiliation and mark the respective author name(s) with a dagger, e.g. "\Author[2,$\dag$]{Anton}{Aman}" with the affiliations "\affil[2]{University of ...}" and "\affil[$\dag$]{deceased, 1 July 2019}"
 
 
-\correspondence{NAME (EMAIL)}
+\correspondence{Pablo R. Larraondo (pablo.larraondo@anu.edu.au)}
 
 \runningtitle{TEXT}
 
@@ -78,7 +77,7 @@ The natural processes Earth surface
 The dynamics of the Earth surface follow defining a lower dimensional space.  he temporal variability of can be described using a number of components that is much lower than the images in the time series. From an algebra point of view, if each image is represented as a column of a matrix, we can say that this matrix has low rank. This fact has been already explored in remote sensing applying Principal Component Analysis (PCA) to compress and filter noise from images \citep{}.
 
 PCA decomposes a matrix into its principal components or eigenvectors and eigenvalues presenting them in decreasing order of identif the eigenvectors of 
-For the case of remote sensing images, the PCA decomposition of series of images captured through time typically shows a decrease in the eigenvalues in which the largest part of the original variance can be explained with only a few components. This fact has been used to compress and also filter out noise in the images coming from clouds and other atmospheric effects.
+For the case of remote sensing images, the PCA decomposition of series of images captured through time typically shows a decrease in the eigenvalues where the largest part of the original variance can be explained with only a few components. This fact has been used to compress and also filter out noise in the images coming from clouds and other atmospheric effects.
 
 When applying PCA to remote sensing images it is required to filter out the noise in the images, which are typically contaminated with clouds and other atmospheric effects. If noise is not removed, most of the variability in the images will be and PCA will capture it in its components. One of the main drawbacks of applying PCA is its inability to work with missing values. Some alternative implementations of Singular Value Decomposition that can work with missing data have been proposed but it is a common practice to assign these values a fixed value or apply interpolation techniques to the data previous to calculating its PCA.
 
@@ -136,36 +135,32 @@ Atmospheric processes normally have a much higher temporal variability than the 
 TEXT
 
 
-\section{Conclusion}
+\conclusions  %% \conclusions[modified heading if necessary]
 In this paper, we evaluated the application of NNs to decompose remote sensing data in the presence of missing values. The methodology was evaluated to Sentinel-2 time series data for the Australian Capital Territory region. The NN-based methodology achieved better compression ratios and accuracy at interpolating missing values when compared to PCA. We demonstrate that relaxing the orthogonality constraints of PCA improves compression for time series of satellite multispectral data.
 
 Additional studies are planned to evaluate the effect of non-linearities and convolution operations in the network. Another avenue for exploration is the introduction of constraints that lead to sparsity to enhance compression and improve interpretability of the results. 
 
-TEXT
-
-\conclusions  %% \conclusions[modified heading if necessary]
-TEXT
-
 %% The following commands are for the statements about the availability of data sets and/or software code corresponding to the manuscript.
 %% It is strongly recommended to make use of these sections in case data sets and/or software code have been part of your research the article is based on.
 
-\codeavailability{TEXT} %% use this section when having only software code available
+%\codeavailability{TEXT} %% use this section when having only software code available
 
 
-\dataavailability{TEXT} %% use this section when having only data sets available
+%\dataavailability{TEXT} %% use this section when having only data sets available
 
 
-\codedataavailability{TEXT} %% use this section when having data sets and software code available
+\codedataavailability{} 
+%% use this section when having data sets and software code available
+The code used to process the data and run the experiments in this paper is publicly available at: \\
+\href{https://github.com/prl900/unet_him8_gpm}{https://github.com/prl900/unet\_him8\_gpm}. \\
+Sentinel-2 Surface Reflectance NBART data used in the experiments comes from Geoscience Australia's Digital Earth Platform \href{https://cmi.ga.gov.au/data-products/dea/190/dea-surface-reflectance-nbart-sentinel-2-msi}{https://cmi.ga.gov.au/data-products/dea/190/dea-surface-reflectance-nbart-sentinel-2-msi}. 
 
+%\sampleavailability{TEXT} %% use this section when having geoscientific samples available
 
-\sampleavailability{TEXT} %% use this section when having geoscientific samples available
-
-
-\videosupplement{TEXT} %% use this section when having video supplements available
-
+%\videosupplement{} %% use this section when having video supplements available
 
 \appendix
-\section{Cloud & shadow masking algorithm}    %% Appendix A
+\section{Cloud \& shadow masking algorithm} %% Appendix A
 
 The cloud and shadow filtering process followed in this work can be described using two steps. In a first step, bright pixels are removed using the blue channel and then two rolling median through time are calculated for the blue and narrow near-infrared channels. Remaining missing data are filled using nearest neighbour interpolation through time. The result of this step are two arrays of the same dimensions as the initial ones where pixels with high reflectance values on the blue channel have been removed and the values of the pixels are smooth in time using a temporal median filter. The purpose of this step is to have a clean stack of images that captures long term trends in the signal to be used as reference in the next step.
 
@@ -176,12 +171,12 @@ The cloud and shadow filtering process followed in this work can be described us
  nnir = load(ds:sentinel2, band:narrow\_nir, x:[xstart,xend], y:[ystart,yend],time:[tstart,tend])\\
  \\
  \Comment{\#2. Assign pixels with blue reflectances exceeding lower quartile value by more than 10\% to NaN.}\\
- blue[(blue - blue.percentile(0.25)) > 0.1] = NaN\\
- nnir[(blue - blue.percentile(0.25)) > 0.1] = NaN\\
+ blue[(blue - blue.percentile(0.25)) $>$ 0.1] = NaN\\
+ nnir[(blue - blue.percentile(0.25)) $>$ 0.1] = NaN\\
  \\
  \Comment{\#3. Entirely wipe images with more than 66\% missing pixels}\\
- blue[(blue.count\_nan(axis=1,2) > width*hight*0.66] = NaN\\
- nnir[(nnir.count\_nan(axis=1,2) > width*hight*0.66] = NaN\\
+ blue[(blue.count\_nan(axis=1,2) $>$ width*hight*0.66] = NaN\\
+ nnir[(nnir.count\_nan(axis=1,2) $>$ width*hight*0.66] = NaN\\
  \\
  \Comment{\#4. Calculate rolling median along time dimension and interpolate missing values}\\
  blue\_median = blue.rolling\_median(window\_size=7).interpolate(method=nearest)\\
@@ -202,9 +197,9 @@ The second step uses these rolling median stacks to detect anomalies in the orig
  nnir\_median = step1(nnir)\\
  
  \Comment{\#3. Calculate mask using deviations from the rolling median values}\\
- blue\_mask = (blue - blue\_median) > 0.01 + blue\_median/2\\
- nnir\_mask = (nnir - nnir\_median) < -0.06 + nnir\_median/16\\
- mask = blue\_mask \textbf{or} nnir\_mask\\
+ blue\_mask = (blue - blue\_median) $>$ 0.01 + blue\_median/2\\
+ nnir\_mask = (nnir - nnir\_median) $<$ -0.06 + nnir\_median/16\\
+ mask = blue\_mask $\parallel$ nnir\_mask\\
  \\
  \Comment{\#4. Remove small clusters and dilate remaining ones}\\
  mask = remove\_small\_objects(mask, min\_size=9)\\
@@ -235,14 +230,15 @@ These algorithms have been specified in pseudo-code using a notation similar to 
 
 
 
-\authorcontribution{TEXT} %% this section is mandatory
+%\authorcontribution{TEXT} %% this section is mandatory
 
-\competinginterests{TEXT} %% this section is mandatory even if you declare that no competing interests are present
+%\competinginterests{TEXT} %% this section is mandatory even if you declare that no competing interests are present
 
-\disclaimer{TEXT} %% optional section
+%\disclaimer{TEXT} %% optional section
 
 \begin{acknowledgements}
-TEXT
+Re-emergence or ANU-WALD bushfire centre? Ask Marta
+We gratefully acknowledge the support of NVIDIA Corporation with the donation of the Titan Xp GPU used in this research.
 \end{acknowledgements}
 
 
