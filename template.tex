@@ -69,7 +69,29 @@ TEXT
 
 \introduction  %% \introduction[modified heading if necessary]
 
-From an algebraic perspective, the variability of the Earth's surface, as captured by remote sensing, can be described using a low rank representation of the original data. This fact has been extensively explored and exploited in the literature to create compressed and remove the noise from satellite images. 
+Remote sensing provides valuable information about the Earth at an increasing level of detail in the spatial, spectral and temporal domains. Due to the size of current remote sensing collections, processing requires accessing large amounts of storage and compute resources, making this task difficult and expensive. In the case of studying land processes, only the reflectance component coming from the Earth's surface is used, and all other effects originating in the atmosphere, such as clouds or shadows, can be considered noise contaminating the land's signal. Changes in the land typically happen at lower temporal scales than those in the atmosphere, which suggests that the land dynamics can be described using in much lower dimensional space than the original data. This idea leads to the exploration of methodologies that exploit the inherent redundancies in the data and find efficient representations able to capture the variability in the signal coming just from the land.
+
+From an algebraic perspective, we can say that there exists a low-rank representation of the Earth's surface signal that is able to capture most of the variability in the original signal. Finding this low-rank representation is the objective of Principal Component Analysis (PCA). The use of PCA in remote sensing has been known for many years and it has been extensively explored in the context of noise filtering and the compression of images.
+
+One of the limitations of PCA is its inability to work with missing values. As discussed before, remote sensing images representing the land surface, are often contaminated with atmospheric signals that need to be filtered, creating gaps of missing data in the images. There are different approaches for dealing with missing data before applying PCA, such as, temporally aggregating the data, assign fixed values to the missing data or interpolation using close neighbours in space or time. Therefore, the result of a PCA decomposition depends on the missing data imputation process used. In any case, all these methods impute artificial, non-observed values in the original signal, introducing artificial biases.
+
+PCA calculates the principal components as the eigenvectors of the correlation matrix. This implies that principal components form an orthogonal basis for reconstructing the original matrix. This orthogonality constraint ensures that the information expressed by each component is unique and independent from the others. However, from an optimisation point of view, it defines a non-convex problem. Removing the orthogonality constraint makes the problem convex, which allows applying common optimisation techniques, such as gradient descent, to find valid decompositions of the original data. A framework that generalises PCA under different constraints has been proposed \citep{udell2014generalized}.
+
+In this work we explore how neural networks can be used to find efficient decompositions of remote sensing time series data that can deal with missing values. We present a methodology for and test it using Sentinel-2 data over a region in Australia. 
+
+
+
+PCA finds a low rank matrix that minimizes the approximation error, in the least-squares sense, to the original data set. A factorization of this low rank matrix embeds the original high dimensional features into a low dimensional space. In this paper we use the term generalized low rank model (GLRM) to refer to the problem of approximating a data set as a product of two low dimensional factors by minimizing an objective function. \citep{udell2014generalized}.
+
+
+original data the variability of the Earth's surface, as captured by remote sensing, can be described using a . This fact has been extensively explored and exploited in the literature to create compressed and remove the noise from satellite images. 
+
+
+of the 
+
+
+
+
 
 Changes in reflectance values or local textures that are separable from changes caused by other factors such as differences in atmospheric conditions, illumination and viewing angles, and soil moistures \citep{deng2008pca}.
 
@@ -79,7 +101,6 @@ The dynamics of the Earth surface follow defining a lower dimensional space.  he
 PCA decomposes a matrix into its principal components or eigenvectors and eigenvalues presenting them in decreasing order of identif the eigenvectors of 
 For the case of remote sensing images, the PCA decomposition of series of images captured through time typically shows a decrease in the eigenvalues where the largest part of the original variance can be explained with only a few components. This fact has been used to compress and also filter out noise in the images coming from clouds and other atmospheric effects.
 
-When applying PCA to remote sensing images it is required to filter out the noise in the images, which are typically contaminated with clouds and other atmospheric effects. If noise is not removed, most of the variability in the images will be and PCA will capture it in its components. One of the main drawbacks of applying PCA is its inability to work with missing values. Some alternative implementations of Singular Value Decomposition that can work with missing data have been proposed but it is a common practice to assign these values a fixed value or apply interpolation techniques to the data previous to calculating its PCA.
 
 In this work we explore an alternative methodology to PCA based on neural networks that can work with missing values. This methodology is tested using Sentinel 2 data and its results are compared to PCA using interpolated data for the missing values. 
 
@@ -87,7 +108,6 @@ The NIPALS algorithm (Non-linear Iterative Partial Least Squares) has been devel
 
 This algorithm allows to realize SVD with missing data, without having to delete the rows with missing data or to estimate the missing data.
 
-PCA finds a low rank matrix that minimizes the approximation error, in the least-squares sense, to the original data set. A factorization of this low rank matrix embeds the original high dimensional features into a low dimensional space. In this paper we use the term generalized low rank model (GLRM) to refer to the problem of approximating a data set as a product of two low dimensional factors by minimizing an objective function. \citep{udell2014generalized}.
 
 \section{Methodology}
 
