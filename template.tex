@@ -126,52 +126,7 @@ Several methodologies for removing clouds from Sentinel-2 images have been propo
 
 In this work we propose a new simple multi-temporal methodology to detect pixels containing clouds and shadows. This methodology defines a series of dynamic thresholds using the for each pixel for determining if pixels corresponds to either clear sky, cloud or shadow categories. This methodology employs two Sentinel-2 spectral bands, blue (490 nm) and narrow nir (865 nm) and is easy to implement and efficient to run compared to other multi-temporal methods \citep{frantz2015enhancing,zhu2018automatic}.
 
-The proposed methodology assumes a 3-dimensional array of images stacked along time. The cloud and shadow filtering process can be described using two steps. In a first step, bright pixels are removed using the blue channel and then two rolling median through time are calculated for the blue and narrow near-infrared channels. Remaining missing data are filled using nearest neighbour interpolation through time. The result of this step are two arrays of the same dimensions as the initial ones where pixels with high reflectance values on the blue channel have been removed and the values of the pixels are smooth in time using a temporal median filter. The purpose of this step is to have a clean stack of images that captures long term trends in the signal to be used as reference in the next step.
-
-\begin{algorithm}[H]
-\SetAlgoLined
- \Comment{\#1. Load Sentinel-2 data from spatial and temporal extents}\\
- blue = load(ds:sentinel2, band:blue, x:[xstart,xend], y:[ystart,yend],time:[tstart,tend])\\
- nnir = load(ds:sentinel2, band:narrow\_nir, x:[xstart,xend], y:[ystart,yend],time:[tstart,tend])\\
- \\
- \Comment{\#2. Assign to NaN pixels with blue reflectances exceeding lower quartile value by more than 10\%}\\
- blue[(blue - blue.percentile(0.25)) > 0.1] = NaN\\
- nnir[(blue - blue.percentile(0.25)) > 0.1] = NaN\\
- \\
- \Comment{\#3. Entirely wipe images with more than 66\% missing pixels}\\
- blue[(blue.count\_nan(axis=1,2) > width*hight*0.66] = NaN\\
- nnir[(nnir.count\_nan(axis=1,2) > width*hight*0.66] = NaN\\
- \\
- \Comment{\#4. Calculate rolling median along time dimension and interpolate missing values}\\
- blue\_median = blue.rolling\_median(window\_size=7).interpolate(method=nearest)\\
- nnir\_median = nnir.rolling\_median(window\_size=7).interpolate(method=nearest)\\
- \caption{Step 1: rolling median calculation.}
-\end{algorithm}
-
-The second step uses these rolling median stacks to detect anomalies in the original stacks. 
-
-\begin{algorithm}[H]
-\SetAlgoLined
- \Comment{\#1. Load Sentinel-2 data from spatial and temporal extents}\\
- blue = load(ds:sentinel2, band:blue, x:[xstart,xend], y:[ystart,yend],time:[tstart,tend])\\
- nnir = load(ds:sentinel2, band:narrow\_nir, x:[xstart,xend], y:[ystart,yend],time:[tstart,tend])\\
- 
- \Comment{\#2. Calculate rolling medians using previous algorithm}\\
- blue\_median = step1(blue)\\
- nnir\_median = step1(nnir)\\
- 
- \Comment{\#3. Calculate mask based on deviations from the rolling median values}\\
- blue\_mask = (blue - blue\_median) > 0.01 + blue\_median/2\\
- nnir\_mask = (nnir - nnir\_median) < -0.06 + nnir\_median/16\\
- mask = blue\_mask \textbf{or} nnir\_mask\\
- \\
- \Comment{\#4. Remove small objects and dilate remaining objects}\\
- mask = remove\_small\_objects(mask, min\_size=9)\\
- mask = dilate(mask, disk=9)\\
- \caption{Step 2: Mask calculation using deviations from the blue and narrow nir rolling means.}
-\end{algorithm}
-
-These algorithms have been specified in pseudo-code using a notation similar to Python's Numpy and Xarray libraries. We refer readers to \href{https://github.com/prl900/unet_him8_gpm}{https://github.com/prl900/unet\_him8\_gpm} for a working implementation of this algorithm.
+The proposed methodology assumes a 3-dimensional array of images stacked along time. 
 
 Atmospheric processes normally have a much higher temporal variability than the ones occurring on the Earth's surface. Temporal based methods exploit this difference in the variability to detect outliers that can be attributed to atmospheric processes. Temporal based methods  
 
@@ -210,9 +165,56 @@ TEXT
 
 
 \appendix
-\section{}    %% Appendix A
+\section{Cloud & shadow masking algorithm}    %% Appendix A
 
-\subsection{}     %% Appendix A1, A2, etc.
+The cloud and shadow filtering process followed in this work can be described using two steps. In a first step, bright pixels are removed using the blue channel and then two rolling median through time are calculated for the blue and narrow near-infrared channels. Remaining missing data are filled using nearest neighbour interpolation through time. The result of this step are two arrays of the same dimensions as the initial ones where pixels with high reflectance values on the blue channel have been removed and the values of the pixels are smooth in time using a temporal median filter. The purpose of this step is to have a clean stack of images that captures long term trends in the signal to be used as reference in the next step.
+
+\begin{algorithm}[H]
+\SetAlgoLined
+ \Comment{\#1. Load Sentinel-2 data from spatial and temporal extents}\\
+ blue = load(ds:sentinel2, band:blue, x:[xstart,xend], y:[ystart,yend],time:[tstart,tend])\\
+ nnir = load(ds:sentinel2, band:narrow\_nir, x:[xstart,xend], y:[ystart,yend],time:[tstart,tend])\\
+ \\
+ \Comment{\#2. Assign pixels with blue reflectances exceeding lower quartile value by more than 10\% to NaN.}\\
+ blue[(blue - blue.percentile(0.25)) > 0.1] = NaN\\
+ nnir[(blue - blue.percentile(0.25)) > 0.1] = NaN\\
+ \\
+ \Comment{\#3. Entirely wipe images with more than 66\% missing pixels}\\
+ blue[(blue.count\_nan(axis=1,2) > width*hight*0.66] = NaN\\
+ nnir[(nnir.count\_nan(axis=1,2) > width*hight*0.66] = NaN\\
+ \\
+ \Comment{\#4. Calculate rolling median along time dimension and interpolate missing values}\\
+ blue\_median = blue.rolling\_median(window\_size=7).interpolate(method=nearest)\\
+ nnir\_median = nnir.rolling\_median(window\_size=7).interpolate(method=nearest)\\
+ \caption{Step 1: rolling median calculation.}
+\end{algorithm}
+
+The second step uses these rolling median stacks to detect anomalies in the original stacks. 
+
+\begin{algorithm}[H]
+\SetAlgoLined
+ \Comment{\#1. Load Sentinel-2 data from spatial and temporal extents}\\
+ blue = load(ds:sentinel2, band:blue, x:[xstart,xend], y:[ystart,yend],time:[tstart,tend])\\
+ nnir = load(ds:sentinel2, band:narrow\_nir, x:[xstart,xend], y:[ystart,yend],time:[tstart,tend])\\
+ 
+ \Comment{\#2. Calculate rolling medians using previous algorithm}\\
+ blue\_median = step1(blue)\\
+ nnir\_median = step1(nnir)\\
+ 
+ \Comment{\#3. Calculate mask using deviations from the rolling median values}\\
+ blue\_mask = (blue - blue\_median) > 0.01 + blue\_median/2\\
+ nnir\_mask = (nnir - nnir\_median) < -0.06 + nnir\_median/16\\
+ mask = blue\_mask \textbf{or} nnir\_mask\\
+ \\
+ \Comment{\#4. Remove small clusters and dilate remaining ones}\\
+ mask = remove\_small\_objects(mask, min\_size=9)\\
+ mask = dilate(mask, disk=9)\\
+ \caption{Step 2: Mask calculation using deviations from the blue and narrow nir rolling means.}
+\end{algorithm}
+
+These algorithms have been specified in pseudo-code using a notation similar to Python's Numpy and Xarray libraries. We refer readers to \href{https://github.com/prl900/unet_him8_gpm}{https://github.com/prl900/unet\_him8\_gpm} for a working implementation of this algorithm.
+
+%\subsection{}     %% Appendix A1, A2, etc.
 
 
 \noappendix       %% use this to mark the end of the appendix section
