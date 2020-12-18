@@ -3,7 +3,6 @@ import pylab
 import numpy as np
 import xarray as xr
 
-
 ds = xr.open_dataset(f"/data/pca_act/000_2018.nc")
 
 rgbs = []
@@ -22,4 +21,4 @@ ax.plot_surface(x, y, np.ones(rgbs[0].shape[:2])*2, rstride=1, cstride=1, faceco
 ax.plot_surface(x, y, np.ones(rgbs[0].shape[:2])*0, rstride=1, cstride=1, facecolors=rgbs[2], shade=False)
 ax.set_zticklabels([0,"","...","",63,"",64,"",65])
 
-plt.savefig("fig2a.png")
+plt.savefig("fig2b.png", bbox_inches='tight')

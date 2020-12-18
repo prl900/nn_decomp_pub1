@@ -23,4 +23,4 @@ ax.plot_surface(x, y, np.ones(bands[0].shape[:2])*5, rstride=1, cstride=1, facec
 ax.plot_surface(x, y, np.ones(bands[0].shape[:2])*6, rstride=1, cstride=1, facecolors=plt.cm.hot(bands[6]), shade=False)
 ax.set_zticklabels([0,"","","...","","",461])
 
-plt.savefig("fig2b.png")
+plt.savefig("fig2b.png", bbox_inches='tight')
