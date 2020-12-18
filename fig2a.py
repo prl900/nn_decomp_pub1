@@ -21,4 +21,4 @@ ax.plot_surface(x, y, np.ones(rgbs[0].shape[:2])*2, rstride=1, cstride=1, faceco
 ax.plot_surface(x, y, np.ones(rgbs[0].shape[:2])*0, rstride=1, cstride=1, facecolors=rgbs[2], shade=False)
 ax.set_zticklabels([0,"","...","",63,"",64,"",65])
 
-plt.savefig("fig2b.png", bbox_inches='tight')
+plt.savefig("fig2a.png", bbox_inches='tight')
