@@ -69,52 +69,22 @@ TEXT
 
 \introduction  %% \introduction[modified heading if necessary]
 
-Remote sensing provides valuable information about the Earth at an increasing level of detail in the spatial, spectral and temporal domains. Due to the size of current remote sensing collections, processing requires accessing large amounts of storage and compute resources, making this task difficult and expensive. In the case of studying land processes, only the reflectance component coming from the Earth's surface is used, and all other effects originating in the atmosphere, such as clouds or shadows, can be considered noise contaminating the land's signal. Changes in the land typically happen at lower temporal scales than those in the atmosphere, which suggests that the land dynamics can be described using in much lower dimensional space than the original data. This idea leads to the exploration of methodologies that exploit the inherent redundancies in the data and find efficient representations able to capture the variability in the signal coming just from the land.
+Remote sensing provides valuable information about the Earth with an increasing level of detail in the spatial, spectral and temporal domains. Due to the size of current remote sensing collections, processing the data requires accessing large amounts of storage and compute resources, making this task difficult and expensive. In the case of studying land processes, only the reflectance component coming from the Earth's surface is used, and all other effects originating in the atmosphere, such as clouds or shadows, can be considered noise contaminating the land's signal. Changes in the land typically happen at lower temporal scales than those in the atmosphere, which suggests that the land dynamics can be described using in much lower dimensional space than the original data. This idea leads to the exploration of methodologies that exploit the inherent redundancies in the data and find efficient representations, able to capture the variability in the signal coming just from the land.
 
-From an algebraic perspective, we can say that there exists a low-rank representation of the Earth's surface signal that is able to capture most of the variability in the original signal. Finding this low-rank representation is the objective of Principal Component Analysis (PCA). The use of PCA in remote sensing has been known for many years and it has been extensively explored in the context of noise filtering and the compression of images.
+From an algebraic perspective, we can say that there exists a low-rank representation of the Earth's surface signal that is able to capture most of the variability in the original signal. Finding this low-rank representation is the objective of Principal Component Analysis (PCA). The use of PCA in remote sensing has been known for many years and it has been extensively explored in the context of noise filtering and the compression of satellite images.
 
-One of the limitations of PCA is its inability to work with missing values. As discussed before, remote sensing images representing the land surface, are often contaminated with atmospheric signals that need to be masked, creating gaps of missing data in the images. There are different approaches for dealing with missing values before applying PCA, such as, temporally aggregating the data, assign fixed values to the missing data or interpolation using close neighbours in space or time. Therefore, the result of a PCA decomposition depends on the missing data imputation process used. In any case, all these methods impute artificial, non-observed values in the original signal, introducing biases.
+One of the limitations of PCA is its inability to work with missing values. As discussed before, remote sensing images representing the land surface, are often contaminated with atmospheric signals that need to be filtered, creating gaps of missing data in the images. There are different approaches for removing missing values for applying PCA, such as, temporal aggregation of pixels, assigning fixed values to the missing data or using different forms of interpolation through space or time. Therefore, the resulting decomposition performed by the PCA would depend on the process used to estimate values for the missing data. Regardless of the quality of the method employed for removing the missing values, artificial, non-observed values are introduced in the original signal, leading to errors and biases in the resulting decomposition.
 
-PCA calculates the principal components as the eigenvectors of the correlation matrix. This implies that principal components form an orthogonal basis for reconstructing the original matrix. This orthogonality constraint ensures that the information expressed by each component is unique and independent from the others. However, from an optimisation point of view, it defines a non-convex problem. Removing the orthogonality constraint makes the problem convex, which allows applying common optimisation techniques, such as gradient descent, to find valid decompositions of the original data. A framework that generalises PCA under different constraints has been proposed \citep{udell2014generalized}. In this work we propose implementing the unconstrained PCA matrix decomposition using neural networks and learn the decomposition using gradient descent. Removing the orthogonality constraint makes the problem convex, so gradient descent should converge converge towards the global minumum of the reconstruction error function.
+PCA calculates the principal components of a matrix as the eigenvectors of its correlation matrix. This implies that principal components constitute an orthogonal basis for reconstructing the original matrix. This orthogonality constraint ensures that the information expressed by each component is unique and independent from the others. However, from an optimisation point of view, orthogonality makes the decomposition problem to be non-convex. Removing the orthogonality constraint ensures decomposition is convex, which allows applying common optimisation techniques, such as gradient descent, to find valid decompositions of the original data. This idea of relaxing PCA constraints has been already proposed \citep{udell2014generalized} presenting a framework for generalising low-rank models.
 
-We use mean square error (MSE) as the objective function that measures the error in the reconstructed matrix. To deal with missing values, we use only for the valid pixels to compute the error. The resulting reconstructed stack of images hand we evaluate A series of experiments are performed to evaluate the and compared to classic PCA with pre-interpolated data.
-
-In this work we explore how neural networks can be used to find efficient decompositions of remote sensing time series data that can deal with missing values. We present a methodology for and test it using Sentinel-2 data over a region in Australia. 
-
-
-
-PCA finds a low rank matrix that minimizes the approximation error, in the least-squares sense, to the original data set. A factorization of this low rank matrix embeds the original high dimensional features into a low dimensional space. In this paper we use the term generalized low rank model (GLRM) to refer to the problem of approximating a data set as a product of two low dimensional factors by minimizing an objective function. \citep{udell2014generalized}.
-
-
-original data the variability of the Earth's surface, as captured by remote sensing, can be described using a . This fact has been extensively explored and exploited in the literature to create compressed and remove the noise from satellite images. 
-
-
-of the 
-
-
-
-
-
-Changes in reflectance values or local textures that are separable from changes caused by other factors such as differences in atmospheric conditions, illumination and viewing angles, and soil moistures \citep{deng2008pca}.
-
-The natural processes Earth surface 
-The dynamics of the Earth surface follow defining a lower dimensional space.  he temporal variability of can be described using a number of components that is much lower than the images in the time series. From an algebra point of view, if each image is represented as a column of a matrix, we can say that this matrix has low rank. This fact has been already explored in remote sensing applying Principal Component Analysis (PCA) to compress and filter noise from images \citep{}.
-
-PCA decomposes a matrix into its principal components or eigenvectors and eigenvalues presenting them in decreasing order of identif the eigenvectors of 
-For the case of remote sensing images, the PCA decomposition of series of images captured through time typically shows a decrease in the eigenvalues where the largest part of the original variance can be explained with only a few components. This fact has been used to compress and also filter out noise in the images coming from clouds and other atmospheric effects.
-
-
-In this work we explore an alternative methodology to PCA based on neural networks that can work with missing values. This methodology is tested using Sentinel 2 data and its results are compared to PCA using interpolated data for the missing values. 
-
-The NIPALS algorithm (Non-linear Iterative Partial Least Squares) has been developed by H. Wold at first for PCA and later-on for PLS. It is the most commonly used method for calculating the principal components of a data set. It gives more numerically accurate results when compared with the SVD of the covariance matrix, but is slower to calculate.
-
-This algorithm allows to realize SVD with missing data, without having to delete the rows with missing data or to estimate the missing data.
+Building upon the previous framework, this work explores how neural networks can be used to find efficient decompositions of remote sensing time series data. We evaluate the accuracy and performance of the proposed methodology comparing its results to classical PCA. Considering that the proposed methodology can naturally deal with missing values, we evaluate the quality of the resulting imputed data and compare it to other forms of pixel interpolation through time, a common approach used for applying PCA. The experiments are performed using temporal series of Sentinel-2 data over a region in Australia.
 
 
 \section{Methodology}
 
 
 There are many different possibilities of arranging the data before performing PCA or decomposing. 
+Although the solution converges to a global minimum, it is not unique. , the decomposition is not unique as he decomposition 
 
 
 \section{Data}
@@ -185,6 +155,8 @@ Sentinel-2 Surface Reflectance NBART data used in the experiments comes from Geo
 \section{Cloud \& shadow masking algorithm} %% Appendix A
 
 The cloud and shadow filtering process followed in this work can be described using two steps. In a first step, bright pixels are removed using the blue channel and then two rolling median through time are calculated for the blue and narrow near-infrared channels. Remaining missing data are filled using nearest neighbour interpolation through time. The result of this step are two arrays of the same dimensions as the initial ones where pixels with high reflectance values on the blue channel have been removed and the values of the pixels are smooth in time using a temporal median filter. The purpose of this step is to have a clean stack of images that captures long term trends in the signal to be used as reference in the next step.
+
+Useful??? Changes in reflectance values or local textures that are separable from changes caused by other factors such as differences in atmospheric conditions, illumination and viewing angles, and soil moistures \citep{deng2008pca}.
 
 \begin{algorithm}[H]
 \SetAlgoLined
