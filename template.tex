@@ -80,13 +80,6 @@ PCA calculates the principal components of a matrix as the eigenvectors of its c
 Building upon the previous framework, this work explores how neural networks can be used to find efficient decompositions of remote sensing time series data. We evaluate the accuracy and performance of the proposed methodology comparing its results to classical PCA. Considering that the proposed methodology can naturally deal with missing values, we evaluate the quality of the resulting imputed data and compare it to other forms of pixel interpolation through time, a common approach used for applying PCA. The experiments are performed using temporal series of Sentinel-2 data over a region in Australia.
 
 
-\section{Methodology}
-
-
-There are many different possibilities of arranging the data before performing PCA or decomposing. 
-Although the solution converges to a global minimum, it is not unique. , the decomposition is not unique as he decomposition 
-
-
 \section{Data}
 
 The Copernicus Sentinel-2 mission \citep{drusch2012sentinel} is a constellation of two polar-orbiting satellites Sentinel-2A and Sentinel-2B launched on the 23th of June 2015 and the 7th of March 2017, respectively. These satellites are placed in the same sun-synchronous orbit and scan the Earth with a combined revisit period of 5 days and spatial resolutions that range between 10 and 60 metres. Digital Earth Australia (DEA) \citep{dhu2017digital} is a platform that contains Sentinel-2 data for Australia. DEA facilitates access and enhances quality of the data by adding further processing, such as correction for atmospheric and terrain effects. DEA data is stored using the Albers equal area projection for ensuring pixel size remains constant independent of its location.
@@ -120,6 +113,13 @@ In this work we propose a new simple multi-temporal methodology to detect pixels
 The proposed methodology assumes a 3-dimensional array of images stacked along time. 
 
 Atmospheric processes normally have a much higher temporal variability than the ones occurring on the Earth's surface. Temporal based methods exploit this difference in the variability to detect outliers that can be attributed to atmospheric processes. Temporal based methods  
+
+
+\section{Methodology}
+
+
+There are many different possibilities of arranging the data before performing PCA or decomposing. 
+Although the solution converges to a global minimum, it is not unique. , the decomposition is not unique as he decomposition 
 
 
 
