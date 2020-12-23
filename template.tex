@@ -130,13 +130,7 @@ Where $\mathbf{MSE}$ stands for the mean square error and $A$ and $B$ are the fa
 
 In this work, we employ neural networks to solve this optimisation problem using gradient descent optimisation. This can be expressed using a one-layer neural network that computes the product of two matrices of predefined shape. The neural network is then optimised to minimise the distance between the original matrix and the product of the factors $A$ and $B$. This network does not make use of non-linear activations and does not require an input to be trained, so the result is a linear and unsupervised model.
 
-As opposed to PCA, the proposed methodology for decomposing a matrix does not impose any constraints on the solution. Factors $A$ and $B$ do not need to be orthogonal and , and results in a convex optimisation problem. 
-
-
-
- In our case, this matrix product is optimised to identify the best approximation, in the mean squared error (MSE) sense, to the matrix containing the original temporal series of satellite images -- represented in Figure \ref{dataset_detail} c). In the case of PCA, these two matrices represent the principal components of the original signal and the reconstruction coefficients. 
-
-The column's order and norm of the decomposed matrices varies for each run of the optimisation algorithm, although their product will be the same. In other words, the factorisation of a matrix as the product of two matrices is not unique. In the case of PCA, uniqueness of the solution is ensured by restricting it to find ortho-normal principal components ordered by the magnitude of their corresponding singular values.
+As described in the previous section, we consider $M$ to be the matrix containing temporal series of satellite images, as represented in Figure \ref{dataset_detail} c). We assume that the dynamics of the landscape, expressed through the evolution in time for the different spectral bands, can be captured by a matrix with significantly lower rank than the original. Figure \ref{factorisation} represents the reconstruction of the unbiased satellite observation matrix, $M$, as the product of two matrices, $A$ and $B$. Matrix $M$ in this case contains 138 rows and 160000 columns, corresponding to the temporal dimension and number of pixels (400x400) respectively, in the observation stack. In this representation, the number of components is truncated to 12. Matrix $B$ contains 12 principal components of the same size as the original 400x400 tiles. Matrix $A$ contains the coefficients that multiply each of the components to recreate each of the temporal entries in the original matrix C. The number of columns of $A$ is the same as the rows of $B$, and this number determines the truncation performed to the reconstruction. This number sets therefore a trade-off between the achieved accuracy in the reconstruction of matrix $M$ and the compression ratio with respect to the original image. In this case, considering the total size of the matrices on each side of the equality, we get $(138 \cdot 160000) / ((138 \cdot 12) + (12 \cdot 160000)) = 84 $. 
 
 \begin{figure}%
     \includegraphics[width=10cm]{fig3.png}
@@ -144,9 +138,26 @@ The column's order and norm of the decomposed matrices varies for each run of th
     \label{factorisation}%
 \end{figure}
 
-Figure \ref{factorisation} represents the reconstruction of the unbiased satellite observation matrix, $M$, as the product of two matrices, $A$ and $B$. Matrix C contains 138 rows and 160000 columns, corresponding to the temporal dimension and number of pixels (400x400) respectively, in the observation stack. In this representation, the number of components is truncated to 12. Matrix B contains 12 principal components of the same size as the original 400x400 tiles. Matrix A contains the coefficients that multiply each of the components to recreate each of the temporal entries in the original matrix C. The number of columns of A is the same as the rows of B, and this number determines the truncation performed to the reconstruction. This number sets therefore a trade-off between the achieved accuracy in the reconstruction of matrix C and the compression ratio with respect to the original image. In this case, considering the total size of the matrices on each side of the equality, we get $(138 \cdot 160000) / ((138 \cdot 12) + (12 \cdot 160000)) = 84 $. 
+In PCA, we commonly refer to $A$ as the coefficients matrix and $B$ as the principal components matrix. The reconstruction process presented in Figure \ref{factorisation} is the same regardless of the methodology used to compute $A$ and $B$. Figure \ref{factorisation} represents the resulting matrix $B$ computed using PCA and NN for decomposing the observation matrix. The plots on the lower right show $B^TB$ which represents the inner products between each component. In the case of PCA we can see that principal components form an orthonormal basis, showing entries equal to one along the main diagonal and zero in the rest. In the case of the NN factorisation the components are not orthogonal. Another difference is that the principal components are ordered from the top-left to the bottom-right in order of their importance at explaining the variance in the original signal for the case of PCA but not such ordering exists in the case of NN. We acknowledge that the NN methodology generates different factorisations to PCA, however, we intentionally use the same terminology to refer to the factor matrices for stablishing a link between both methodologies and for improving clarity.
 
-This form of reconstructing the original matrix C by multiplying two other matrices A and B is the same regardless of the methodology used to compute A and B. We acknowledge that when applying unconstrained optimisation to compute A and B, their contents no longer represent the coefficients and principal components as in PCA. However, we use this terminology for referring to these matrices to improve clarity when communicating the results.
+
+
+
+
+
+
+
+
+
+
+In the case of PCA, these two matrices represent the principal components of the original signal and the reconstruction coefficients. 
+
+As opposed to PCA, the proposed methodology for decomposing a matrix does not impose any constraints on the solution. Factors $A$ and $B$ do not need to be orthogonal and , and results in a convex optimisation problem. 
+
+
+The column's order and norm of the decomposed matrices varies for each run of the optimisation algorithm, although their product will be the same. In other words, the factorisation of a matrix as the product of two matrices is not unique. In the case of PCA, uniqueness of the solution is ensured by restricting it to find ortho-normal principal components ordered by the magnitude of their corresponding singular values.
+
+
 
 \begin{figure}%
     {{\includegraphics[width=8cm]{fig4a.png} }}%
@@ -155,7 +166,6 @@ This form of reconstructing the original matrix C by multiplying two other matri
     \label{pcs}%
 \end{figure}
 
-Figure \ref{factorisation} compares the resulting principal components matrices in the case of using PCA and NN for factorising the observation matrix. In the case of PCA, the principal components are ordered from the top-left to the bottom-right in order of their importance at explaining the variance in the original signal. In the case of NN, there is not such ordering and performance has to be evaluated as a whole. 
 
 In the next section we compare both methodologies by performing a series of experiments to assess the reconstruction error and compression ratio achieved by each methodology. To ensure a fair comparison, these experiments were performed using the temporally interpolated version of the data, which does not have missing values. PCA and NN were evaluated just based on their capacity to find efficient decompositions. On a second set of experiments, we investigated the interpolation capabilities of the NN based methodology. This was done by masking known random portions of the original data. These regions were then interpolated using the same methodology for testing PCA and directly fed into the NN based decomposition. The quality of the reconstructed data for each of these methodologies was then compared to the original unmasked data.
 
