@@ -123,7 +123,7 @@ The PCA of a matrix $M$ is typically computed applying singular value decomposit
 From an optimisation point of view, this decomposition problem can be formulated as:
 
 $$
-\argminD_UV MSE(M-UV)
+\arg\:\min_{UV} \mathbf{MSE}(M-UV)
 $$
 
 Neural networks can be regarded as a composition of matrix multiplications with applied non-linearities. The resulting models can approximate any function, given a large enough number of layers. In this work we employ neural networks to perform matrix decompositions using gradient descent optimisation. This can be expressed with a single layer neural networks that computes the product of these two matrices, with no non-linear operations involved.
