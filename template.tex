@@ -118,9 +118,24 @@ Atmospheric processes normally have a much higher temporal variability than the 
 
 \section{Methodology}
 
-Neural networks can be described as a composition of matrix multiplications with applied non-linearities. These models can approximate any function given an enough number of layers. In this work we use neural networks to perform matrix decompositions as the product of two matrices. This can be expressed with a single layer neural networks that computes the product of these two matrices, with no non-linear operations involved. In our case, this matrix product is optimised to identify the best approximation, in the mean squared error (MSE) sense, to the matrix containing the original temporal series of satellite images -- represented in Figure \ref{dataset_detail} c). In the case of PCA, these two matrices represent the principal components of the original signal and the reconstruction coefficients. 
+The PCA of a matrix $M$ is typically computed applying singular value decomposition (SVD) to the covariance matrix. The Eckart-Young theorem \citep{eckart1936approximation}, tells us that this decomposition, truncated to the first $n$ factors, is the best rank-n approximation in the least squares sense, amongst the space of all possible decompositions $M$. Although PCA results in the best factorisation of $M$, the solution is not unique and alternative methods can be employed to find alternative decompositions. 
 
-As opposed to PCA, the proposed optimisation problem does not introduce any constraints on the principal components or coefficients matrices, and results in a convex optimisation problem. The Eckart-Young theorem \citep{eckart1936approximation}, tells us that the PCA decomposition is the best rank-n approximation, in the least squares sense, from all the possible decompositions. Although PCA identifies the global minimum of this optimisation problem, the resulting factorisation is not unique. The column's order and norm of the decomposed matrices varies for each run of the optimisation algorithm, although their product will be the same. In other words, the factorisation of a matrix as the product of two matrices is not unique. In the case of PCA, uniqueness of the solution is ensured by restricting it to find ortho-normal principal components ordered by the magnitude of their corresponding singular values.
+From an optimisation point of view, this decomposition problem can be formulated as:
+
+$$
+\argminD_UV MSE(M-UV)
+$$
+
+Neural networks can be regarded as a composition of matrix multiplications with applied non-linearities. The resulting models can approximate any function, given a large enough number of layers. In this work we employ neural networks to perform matrix decompositions using gradient descent optimisation. This can be expressed with a single layer neural networks that computes the product of these two matrices, with no non-linear operations involved.
+
+As opposed to PCA, the proposed methodology to decompose a matrix does not introduce any constraints on the factorisation process, and results in a convex optimisation problem. 
+
+
+Although PCA identifies the global minimum of this optimisation problem, the resulting factorisation is not unique. 
+
+ In our case, this matrix product is optimised to identify the best approximation, in the mean squared error (MSE) sense, to the matrix containing the original temporal series of satellite images -- represented in Figure \ref{dataset_detail} c). In the case of PCA, these two matrices represent the principal components of the original signal and the reconstruction coefficients. 
+
+The column's order and norm of the decomposed matrices varies for each run of the optimisation algorithm, although their product will be the same. In other words, the factorisation of a matrix as the product of two matrices is not unique. In the case of PCA, uniqueness of the solution is ensured by restricting it to find ortho-normal principal components ordered by the magnitude of their corresponding singular values.
 
 \begin{figure}%
     \includegraphics[width=10cm]{fig3.png}
