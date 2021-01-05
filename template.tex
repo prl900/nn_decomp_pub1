@@ -27,7 +27,7 @@
 
 \begin{document}
 
-\title{Neural networks for inputting missing values and compressing time series of multispectral remote sensing data.}
+\title{Neural networks for inputting missing values in time series of multispectral remote sensing data.}
 
 
 % \Author[affil]{given_name}{surname}
@@ -149,12 +149,13 @@ The proposed methodology uses NNs to compute the factor matrices $A$ and $B$. Ne
 
 Figure \ref{pcs} represents the 12 principal components in matrix $B$ computed using PCA (left) and NN (right) reshaped into the original 400x400 size of the stack of images. The plots on the lower right show the product $B^TB$, which represents the inner products between each component. In the case of PCA, $B^TB$, shows entries equal to one along the main diagonal and zero everywhere else. This confirms that principal components resulting from PCA form an orthonormal basis. On the right, the $B^TB$ resulting from the NN factorisation, has heterogeneous values across the matrix, which means that the computed components are not orthogonal. Another difference between both methodologies is that the principal components computed with PCA are ordered by importance at explaining the variance in the original signal (from top-left to the bottom-right) but not such ordering exists in the case of NN (this can be verified looking at the values of the coefficients matrix in each case). We note that as opposed to PCA, the decomposition achieved with the NN method is not unique and varies between runs. The order of the components (columns of $B$) and also the magnitude of the matrices elements can vary and still generate the same product.
 
-In the next section we perform a series of experiments to assess the ability of the NN methodology to impute missing entries. These results are then compared with temporally interpolated PCA. To ensure a fair comparison between methodologies, we randomly masked known portions in the image stack and assessed the imputed and interpolated values with the original unmasked values.
+In the next section we perform a series of experiments to assess the ability of the NN methodology to impute missing entries compared to temporal interpolation. These results are then compared with temporally interpolated PCA. To ensure a fair comparison between methodologies, we randomly masked known portions in the image stack and assessed the imputed and interpolated values with the original unmasked values.
 
 
 \section{Experimental Results and Discussion}
 
-TEXT
+
+Figure \ref{pcs} represents 
 
 
 \conclusions  %% \conclusions[modified heading if necessary]
