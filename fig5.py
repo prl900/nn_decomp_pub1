@@ -24,10 +24,14 @@ patch_hsize = 40
 mask = ds.nbart_blue.isnull().values
 pmask = np.zeros(mask.shape, dtype=np.bool)
 
+"""
 for _ in range(20):
     t, ii, jj = generate_patches(patch_hsize, mask)
     pmask[t, jj-patch_hsize:jj+patch_hsize, ii-patch_hsize:ii+patch_hsize] = True
+"""
 
+# For deterministic results
+pmask[10, 100:180,80:160] = True
 
 stack = ds["nbart_red"].astype(np.float32) #/ 1e4
 
