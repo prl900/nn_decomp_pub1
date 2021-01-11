@@ -27,7 +27,7 @@
 
 \begin{document}
 
-\title{Neural networks for inputting missing values in time series of multispectral remote sensing data.}
+\title{Decomposition of multispectral Sentinel-2 time series using neural networks for missing data imputation and compression.}
 
 
 % \Author[affil]{given_name}{surname}
@@ -118,7 +118,7 @@ Atmospheric processes normally have a much higher temporal variability than the 
 
 \section{Methodology}
 
-Principal Component Analysis (PCA) of a matrix $M$ is typically computed via the singular value decomposition (SVD). The Eckart-Young theorem \citep{eckart1936approximation}, tells us that this decomposition, truncated to the first $n$ factors, is the best rank-n approximation in the least squares sense, amongst all possible decompositions of $M$. Although PCA achieves the best factorisation of $M$, its solution is not unique and other methods can be employed to find alternative decompositions with the same error. 
+Principal Component Analysis (PCA) of a matrix $M$ is typically computed via the singular value decomposition (SVD). The Eckart-Young theorem \citep{eckart1936approximation}, proves that this decomposition, truncated to the first $n$ factors, is the best rank-n approximation in the least squares sense, amongst all possible decompositions of $M$. Although PCA achieves the best factorisation of $M$, its solution is not unique and other methods can be employed to find alternative decompositions with the same error. 
 
 From an optimisation point of view, this matrix factorisation problem can be formulated as:
 
@@ -130,7 +130,11 @@ Where $\mathbf{MSE}$ stands for the mean square error and $A$ and $B$ are the fa
 
 In this work, we employ neural networks to solve this problem using gradient descent optimisation. The model can be expressed using a two layers neural network where each layer represents one factor matrix. The neural network then is trained to minimise the distance between the original matrix $M$ and the product of the two layers corresponding to factors $A$ and $B$. This network does not make use of non-linear activations resulting in a linear model.
 
-As described in the previous section, we consider $M$ to be the matrix containing temporal series of satellite images, represented in Figure \ref{dataset_detail} c). We assume that the dynamics of the landscape, expressed through the evolution in time of the different spectral bands, can be expressed by a matrix with significantly lower rank than the original. Figure \ref{factorisation} represents the reconstruction of the unbiased satellite observation matrix, $M$, as the product of two matrices, $A$ and $B$. Matrix $M$ in this case contains 138 rows and 160000 columns, corresponding to the temporal dimension and number of pixels (400x400) respectively. In this representation, the number of components is truncated to 12. Matrix $B$ is then a matrix with size (12, 160000) corresponding to 12 principal components and the 400x400 spatial shape of the orignal tiles. Matrix $A$ contains the coefficients that multiply each of the principal components to recreate the temporal entries in the original matrix $M$. The number of columns of $A$ is the same as the rows of $B$, and this number determines the truncation performed to the reconstruction. This number sets therefore a trade-off between the achieved accuracy in the reconstruction and the compression ratio of the original matrix $M$. In this case, considering the total size of the matrices on each side of the equality, we get that the factors are $(138 \cdot 160000) / ((138 \cdot 12) + (12 \cdot 160000)) = 84 $ times smaller when compared to $M$. 
+
+As described in the previous section, we consider $M$ to be the matrix containing temporal series of satellite images, represented in Figure \ref{dataset_detail} c). We assume that the dynamics of the landscape, expressed through the evolution in time of the different spectral bands, can be expressed by a matrix $M'$, that has significantly lower rank than the original matrix. This rank can be determined truncating the size of the decomposed matrices at a certain level, or in terms of PCA decomposition, by limiting the number of the factored principal components. As the number components is increased, the error in the factorisation is reduced, getting to zero when the number of components equals the rows of $M$, which corresponds to the size of the temporal dimension. Figure \ref{explained_variance_evolution} represents the evolution of the explained variance in the recovered matrix $M'$ as the number of components is increased. To perform the experiments in this work, we fixed the number of components to 12, which gives a good compromise between the quality of the recovered signal and the compression ratio. 
+
+
+Figure \ref{factorisation} represents the reconstruction of the unbiased satellite observation matrix, $M$, as the product of two matrices, $A$ and $B$. Matrix $M$ in this case contains 138 rows and 160000 columns, corresponding to the temporal dimension and number of pixels (400x400) respectively. In this representation, the number of components is truncated to 12. Matrix $B$ is then a matrix with size (12, 160000) corresponding to 12 principal components and the 400x400 spatial shape of the orignal tiles. Matrix $A$ contains the coefficients that multiply each of the principal components to recreate the temporal entries in the original matrix $M$. The number of columns of $A$ is the same as the rows of $B$, and this number determines the truncation performed to the reconstruction. This number sets therefore a trade-off between the achieved accuracy in the reconstruction and the compression ratio of the original matrix $M$. In this case, considering the total size of the matrices on each side of the equality, we get that the factors are $(138 \cdot 160000) / ((138 \cdot 12) + (12 \cdot 160000)) = 84 $ times smaller when compared to $M$. 
 
 \begin{figure}%
     \includegraphics[width=10cm]{fig3.png}
@@ -153,6 +157,7 @@ In the next section we perform a series of experiments to assess the ability of 
 
 
 \section{Experimental Results and Discussion}
+
 
 In order to compare the accuracy of the imputed missing data of our method we perform an experiment to 
 
