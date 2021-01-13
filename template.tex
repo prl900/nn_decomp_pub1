@@ -203,6 +203,8 @@ In this paper, we evaluated the application of NNs to decompose remote sensing d
 
 Additional studies are planned to evaluate the effect of non-linearities and convolution operations in the network. Another avenue for exploration is the introduction of constraints that lead to sparsity to enhance compression and improve interpretability of the results. 
 
+The cloud and shadow filtering step was performed as a pre-processing step in this work. The quality of this step has a great influence in the quality of the results. Pixels with non detected clouds, increase variance in the temporal series and tend to be represented in the decomposed principal components degrading the quality of the results. Ideally, this pre-processing step could be avoided by designing a neural network that is able to decompose input signals contaminated by noise. We are currently exploring the possibility of building this end-to-end network.
+
 %% The following commands are for the statements about the availability of data sets and/or software code corresponding to the manuscript.
 %% It is strongly recommended to make use of these sections in case data sets and/or software code have been part of your research the article is based on.
 
