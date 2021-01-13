@@ -27,7 +27,7 @@
 
 \begin{document}
 
-\title{Decomposition of multispectral Sentinel-2 time series using neural networks for missing data imputation and compression.}
+\title{Decomposition of multispectral Sentinel-2 time series using neural networks for enhanced missing data imputation and compression.}
 
 
 % \Author[affil]{given_name}{surname}
@@ -116,7 +116,7 @@ The proposed methodology assumes a 3-dimensional array of images stacked along t
 Atmospheric processes normally have a much higher temporal variability than the ones occurring on the Earth's surface. Temporal based methods exploit this difference in the variability to detect outliers that can be attributed to atmospheric processes. Temporal based methods  
 
 
-\section{Methodology}
+\section{Methodology and Experiment design}
 
 Principal Component Analysis (PCA) of a matrix $M$ is typically computed via the singular value decomposition (SVD). The Eckart-Young theorem \citep{eckart1936approximation}, proves that this decomposition, truncated to the first $n$ factors, is the best rank-n approximation in the least squares sense, amongst all possible decompositions of $M$. Although PCA achieves the best factorisation of $M$, its solution is not unique and other methods can be employed to find alternative decompositions with the same error. 
 
@@ -153,8 +153,29 @@ The proposed methodology uses NNs to compute the factor matrices $A$ and $B$. Ne
 
 Figure \ref{pcs} represents the 12 principal components in matrix $B$ computed using PCA (left) and NN (right) reshaped into the original 400x400 size of the stack of images. The plots on the lower right show the product $B^TB$, which represents the inner products between each component. In the case of PCA, $B^TB$, shows entries equal to one along the main diagonal and zero everywhere else. This confirms that principal components resulting from PCA form an orthonormal basis. On the right, the $B^TB$ resulting from the NN factorisation, has heterogeneous values across the matrix, which means that the computed components are not orthogonal. Another difference between both methodologies is that the principal components computed with PCA are ordered by importance at explaining the variance in the original signal (from top-left to the bottom-right) but not such ordering exists in the case of NN (this can be verified looking at the values of the coefficients matrix in each case). We note that as opposed to PCA, the decomposition achieved with the NN method is not unique and varies between runs. The order of the components (columns of $B$) and also the magnitude of the matrices elements can vary and still generate the same product.
 
+\subsection{Missing Data Imputation}
+
 In the next section we perform a series of experiments to assess the ability of the NN methodology to impute missing entries compared to temporal interpolation. These results are then compared with temporally interpolated PCA. To ensure a fair comparison between methodologies, we randomly masked known portions in the image stack and assessed the imputed and interpolated values with the original unmasked values.
 
+\subsection{Multispectral Data Compression}
+
+Multispectral satellite imagery is able to reveal the Earth's surface composition through well known reflectance patterns across the different spectral bands. Although each of the multispectral bands contains unique information, the general spatial structure of a region is more or less equally represented across the electromagnetic spectrum. This spatial similarity between spectral bands can be exploited to create more compact representations of the data. In this section we explore how similar techniques to the ones used for decomposing time series of single band data, can be applied to decompose multispectral data.
+
+Using a naive approach, we can stack all the spectral bands to form a matrix similar to $M$, represented in Figure \ref{factorisation}, but containing $n$ times more rows, where $n$ is the number of spectral bands. The difference with the previous experiments is that the new extracted principal components are shared between all the spectral bands. The benefit of this approach is that the resulting decomposition is $n$ times more efficient in size when compared to performing the decomposition individually. The drawback, on the other hand, is that the quality of the reconstructed matrix containing all the bands at once is not as good as when decomposing each band individually. To identify the level of redundancy shared between spectral bands, we designed an experiment that compares the number of components used in each approach for a given error of the reconstructed matrix. 
+
+One of the main benefits of using NNs to perform matrix decompositions is their flexibility for exploring alternative architectures. The field of image analysis using NNs has recently experienced a rapid development with the popularization of convolutional neural networks (CNN). CNNs are a type of neural networks that include convolutional operations in their layers. The convolution operations are normally performed across the images and are used to identify spatial and spectral relationships in the data.
+
+
+
+In the next section we present the results of the experiments that identify 
+
+
+
+Instead of decomposing each spectral band separately, as proposed in the previous experiment, we explore the possibility of learning principal component representations that are shared between the different spectral bands. 
+
+
+by structure can  can still be identified 
+The evaluation of the imputation of missing data is evaluated 
 
 \section{Experimental Results and Discussion}
 
