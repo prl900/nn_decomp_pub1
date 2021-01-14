@@ -34,7 +34,7 @@
 
 \Author[1]{Pablo R.}{Larraondo}
 \Author[1]{Albert I. J. M.}{van Dijk}
-\Author[1]{Marta}{Yebra}
+% \Author[1]{Marta}{Yebra}
 
 \affil[1]{Fenner School of Environment and Society. Australian National University. Canberra, Australia}
 
@@ -130,10 +130,7 @@ Where $\mathbf{MSE}$ stands for the mean square error and $A$ and $B$ are the fa
 
 In this work, we employ neural networks to solve this problem using gradient descent optimisation. The model can be expressed using a two layers neural network where each layer represents one factor matrix. The neural network then is trained to minimise the distance between the original matrix $M$ and the product of the two layers corresponding to factors $A$ and $B$. This network does not make use of non-linear activations resulting in a linear model.
 
-
 As described in the previous section, we consider $M$ to be the matrix containing temporal series of satellite images, represented in Figure \ref{dataset_detail} c). We assume that the dynamics of the landscape, expressed through the evolution in time of the different spectral bands, can be expressed by a matrix $M'$, that has significantly lower rank than the original matrix. This rank can be determined truncating the size of the decomposed matrices at a certain level, or in terms of PCA decomposition, by limiting the number of the factored principal components. As the number components is increased, the error in the factorisation is reduced, getting to zero when the number of components equals the rows of $M$, which corresponds to the size of the temporal dimension. Figure \ref{explained_variance_evolution} represents the evolution of the explained variance in the recovered matrix $M'$ as the number of components is increased. To perform the experiments in this work, we fixed the number of components to 12, which gives a good compromise between the quality of the recovered signal and the compression ratio. 
-
-
 Figure \ref{factorisation} represents the reconstruction of the unbiased satellite observation matrix, $M$, as the product of two matrices, $A$ and $B$. Matrix $M$ in this case contains 138 rows and 160000 columns, corresponding to the temporal dimension and number of pixels (400x400) respectively. In this representation, the number of components is truncated to 12. Matrix $B$ is then a matrix with size (12, 160000) corresponding to 12 principal components and the 400x400 spatial shape of the orignal tiles. Matrix $A$ contains the coefficients that multiply each of the principal components to recreate the temporal entries in the original matrix $M$. The number of columns of $A$ is the same as the rows of $B$, and this number determines the truncation performed to the reconstruction. This number sets therefore a trade-off between the achieved accuracy in the reconstruction and the compression ratio of the original matrix $M$. In this case, considering the total size of the matrices on each side of the equality, we get that the factors are $(138 \cdot 160000) / ((138 \cdot 12) + (12 \cdot 160000)) = 84 $ times smaller when compared to $M$. 
 
 \begin{figure}%
@@ -157,29 +154,6 @@ Figure \ref{pcs} represents the 12 principal components in matrix $B$ computed u
 
 In the next section we perform a series of experiments to assess the ability of the NN methodology to impute missing entries compared to temporal interpolation. These results are then compared with temporally interpolated PCA. To ensure a fair comparison between methodologies, we randomly masked known portions in the image stack and assessed the imputed and interpolated values with the original unmasked values.
 
-\subsection{Multispectral Data Compression}
-
-Multispectral satellite imagery is able to reveal the Earth's surface composition through well known reflectance patterns across the different spectral bands. Although each of the multispectral bands contains unique information, the general spatial structure of a region is more or less equally represented across the electromagnetic spectrum. This spatial similarity between spectral bands can be exploited to create more compact representations of the data. In this section we explore how similar techniques to the ones used for decomposing time series of single band data, can be applied to decompose multispectral data.
-
-Using a naive approach, we can stack all the spectral bands to form a matrix similar to $M$, represented in Figure \ref{factorisation}, but containing $n$ times more rows, where $n$ is the number of spectral bands. The difference with the previous experiments is that the new extracted principal components are shared between all the spectral bands. The benefit of this approach is that the resulting decomposition is $n$ times more efficient in size when compared to performing the decomposition individually. The drawback, on the other hand, is that the quality of the reconstructed matrix containing all the bands at once is not as good as when decomposing each band individually. To identify the level of redundancy shared between spectral bands, we designed an experiment that compares the number of components used in each approach for a given error of the reconstructed matrix. 
-
-One of the main benefits of using NNs to perform matrix decompositions is their flexibility for exploring alternative architectures. The field of image analysis using NNs has recently experienced a rapid development with the popularization of convolutional neural networks (CNN). CNNs are a type of neural networks that include convolutional operations in their layers. The convolution operations are normally performed across the images and are used to identify spatial and spectral relationships in the data.
-
-
-
-In the next section we present the results of the experiments that identify 
-
-
-
-Instead of decomposing each spectral band separately, as proposed in the previous experiment, we explore the possibility of learning principal component representations that are shared between the different spectral bands. 
-
-
-by structure can  can still be identified 
-The evaluation of the imputation of missing data is evaluated 
-
-\section{Experimental Results and Discussion}
-
-
 In order to compare the accuracy of the imputed missing data of our method we perform an experiment to 
 
 A mask with 
@@ -196,6 +170,37 @@ by the imputation
 \end{figure}
 
 Figure \ref{dataset_versions} represents 
+
+\subsection{Multispectral Data Compression}
+
+Multispectral satellite imagery is able to reveal the Earth's surface composition through well known reflectance patterns across the different spectral bands. Although each of the multispectral bands contains unique information, the general spatial structure of a region is more or less equally represented across the electromagnetic spectrum. This spatial similarity between spectral bands can be exploited to create more compact representations of the data. In this section we explore how similar techniques to the ones used for decomposing time series of single band data, can be applied to decompose multispectral data.
+
+Using a naive approach, we can stack all the spectral bands to form a matrix similar to $M$, represented in Figure \ref{factorisation}, but containing $n$ times more rows, where $n$ is the number of spectral bands. The difference with the previous experiments is that the new extracted principal components are shared between all the spectral bands. The benefit of this approach is that the resulting decomposition is $n$ times more efficient in size when compared to performing the decomposition individually. The drawback, on the other hand, is that the quality of the reconstructed matrix containing all the bands at once is not as good as when decomposing each band individually. To identify the level of redundancy shared between spectral bands, we designed an experiment that compares the number of components used in each approach for a given error of the reconstructed matrix. 
+
+One of the main benefits of using NNs to perform matrix decompositions is their flexibility for exploring alternative architectures. The field of image analysis using NNs has recently experienced a rapid development with the popularization of convolutional neural networks (CNN). CNNs are a type of neural networks that include convolutional operations in their layers. The convolution operations are normally performed across the images and are used to identify spatial and spectral relationships in the data.
+
+In this work we propose a new NN architecture that includes a convolutional layer, to perform factorisations of multispectral images. 
+
+Figure \ref{factorisation_methods} represents the architecture of this network.
+
+\begin{figure}%
+    \includegraphics[width=10cm]{fig6.png}
+    \caption{Comparison between the basic the convolutional factorisation methodologies.}%
+    \label{factorisation_methods}%
+\end{figure}
+
+In the next section we present the results of the experiments that identify 
+
+
+
+Instead of decomposing each spectral band separately, as proposed in the previous experiment, we explore the possibility of learning principal component representations that are shared between the different spectral bands. 
+
+
+by structure can  can still be identified 
+The evaluation of the imputation of missing data is evaluated 
+
+\section{Experimental Results and Discussion}
+
 
 
 \conclusions  %% \conclusions[modified heading if necessary]
