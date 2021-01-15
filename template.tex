@@ -173,15 +173,13 @@ Figure \ref{dataset_versions} represents
 
 \subsection{Multispectral Data Compression}
 
-Multispectral satellite imagery is able to reveal the Earth's surface composition through well known reflectance patterns across the different spectral bands. Although each of the multispectral bands contains unique information, the general spatial structure of a region is more or less equally represented across the electromagnetic spectrum. This spatial similarity between spectral bands can be exploited to create more compact representations of the data. In this section we explore how similar techniques to the ones used for decomposing time series of single band data, can be applied to decompose multispectral data.
+Multispectral satellite imagery is able to reveal the Earth's surface composition through well known reflectance patterns across the different spectral bands. Although each of the multispectral bands contains unique information, the general spatial structure of a region is more or less equally represented across the electromagnetic spectrum. This spatial similarity between spectral bands can be exploited to create more compact representations of the data. In this section, we explore the possibility of learning principal component representations that are shared between the different spectral bands as opposed to decomposing each spectral band separately.
 
-Using a naive approach, we can stack all the spectral bands to form a matrix similar to $M$, represented in Figure \ref{factorisation}, but containing $n$ times more rows, where $n$ is the number of spectral bands. The difference with the previous experiments is that the new extracted principal components are shared between all the spectral bands. The benefit of this approach is that the resulting decomposition is $n$ times more efficient in size when compared to performing the decomposition individually. The drawback, on the other hand, is that the quality of the reconstructed matrix containing all the bands at once is not as good as when decomposing each band individually. To identify the level of redundancy shared between spectral bands, we designed an experiment that compares the number of components used in each approach for a given error of the reconstructed matrix. 
+Using a naive approach, we can stack all the spectral bands and form a matrix similar to $M$, as represented in Figure \ref{factorisation}, but containing $n$ times more rows, where $n$ is the number of spectral bands. The difference with the previous experiments is that the new extracted principal components would be shared between all the spectral bands. The benefit of this approach is that the resulting decomposition is $n$ times more efficient in size when compared to performing the decomposition on the individual bands. The drawback, on the other hand, is that the quality of the reconstructed matrix containing all the bands at once is not as good as when decomposing each band individually. To identify the level of redundancy shared between spectral bands, we designed an experiment that compares the number of components used in each approach for a given error of the reconstructed matrix. 
 
-One of the main benefits of using NNs to perform matrix decompositions is their flexibility for exploring alternative architectures. The field of image analysis using NNs has recently experienced a rapid development with the popularization of convolutional neural networks (CNN). CNNs are a type of neural networks that include convolutional operations in their layers. The convolution operations are normally performed across the images and are used to identify spatial and spectral relationships in the data.
+One of the main benefits of using NNs to perform matrix decompositions is the possibility of exploring alternative architectures. The field of image analysis using NNs has recently experienced a rapid development due primarly to the use of deep convolutional neural networks (CNN). CNNs are a type of neural network that include convolutional operations in their layers. The convolution operations are normally performed across the spatial domain of images and are used to identify patterns between nearby pixels.
 
-In this work we propose a new NN architecture that includes a convolutional layer, to perform factorisations of multispectral images. 
-
-Figure \ref{factorisation_methods} represents the architecture of this network.
+In this work we propose a new NN architecture that extends the simple matrix factorisation including a convolutional layer. This architecture is able to perform factorisations of multispectral images with a significant improvement of accuracy when compared to the basic methodology. Figure \ref{factorisation_methods} shows a comparison between the basic factorisation architecture and the convolutional one. In both cases the networks are trained using gradient descent to find the matrices represented on the left side of the figure. In the basic architecture, the NN minimises the difference between the matrix with the stacked observations and the product of the the principal components and factors matrices. The convolutional factorisation architecture introduces an extra element, the convolutional kernel. This kernel is a 4-dimensional tensor which is applied to the principal component tensor in its original 3-dimensional shape. This kernel performs a convolution operation on the principal components tensor extending the number of principal components as a result of the operation. 
 
 \begin{figure}%
     \includegraphics[width=14cm]{fig6.png}
@@ -189,15 +187,10 @@ Figure \ref{factorisation_methods} represents the architecture of this network.
     \label{factorisation_methods}%
 \end{figure}
 
-In the next section we present the results of the experiments that identify 
+In terms of the level of compression achieved by these factorisations, the matrix of principal components accounts for most of the space in the compressed versions. Using our example dataset, adding an extra principal component to the factorisation requires storing 160,000 (400x400) more elements in the principal components matrix but only 138 (time steps) in the coefficients matrix. It is therefore in our interest to prioritise finding better representations of the principal components matrix. In this work, we propose the introduction of the convolution kernel as an indirect way of expanding the number of components in the principal components matrix. In the case of considering 12 principal components, a 5x5 convolutional kernel that doubles this number of components would be a 4-dimensional kernel with size 5x5x12x24=7200, which is still significantly smaller than a single principal component. The idea is that by adding a small size component to the network, we are able to effectively expand the number of components in the factorisation.
 
+In the next section we present the results of the experiments to assess the missing data imputation and compression capabilities of the proposed architectures. 
 
-
-Instead of decomposing each spectral band separately, as proposed in the previous experiment, we explore the possibility of learning principal component representations that are shared between the different spectral bands. 
-
-
-by structure can  can still be identified 
-The evaluation of the imputation of missing data is evaluated 
 
 \section{Experimental Results and Discussion}
 
