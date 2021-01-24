@@ -186,16 +186,26 @@ In this work we propose a new NN architecture that extends the simple matrix fac
     \label{factorisation_methods}%
 \end{figure}
 
-In terms of the level of compression achieved by these factorisations, the matrix of principal components accounts for most of the space in the compressed versions. Using our example dataset, adding an extra principal component to the factorisation requires storing 160,000 (400x400) more elements in the principal components matrix but only 138 (time steps) in the coefficients matrix. It is therefore in our interest to prioritise finding better representations of the principal components matrix. In this work, we propose the introduction of the convolution kernel as an indirect way of expanding the number of components in the principal components matrix. In the case of considering 12 principal components, a 5x5 convolutional kernel that doubles this number of components would be a 4-dimensional tensor with size 5x5x12x24=7200, which is still significantly smaller than a single principal component. The idea is that by adding a small size component to the network, we are able to effectively expand the number of components in the factorisation.
+In terms of the level of compression achieved by these factorisations, the matrix of principal components accounts for most of the space in the compressed versions. Using our example dataset, adding an extra principal component to the factorisation requires storing 160,000 (400x400) more elements in the principal components matrix but only 138 (time steps) in the coefficients matrix. It is therefore in our interest to prioritise finding better representations of the principal components matrix. In this work, we propose the introduction of the convolution kernel as an indirect way of expanding the number of components in the principal components matrix. In the case of considering 12 principal components and a 5x5 convolutional kernel that doubles this number of components to 24, would be a 4-dimensional tensor with size 5x5x12x24=7200, which is still significantly smaller than a single principal component. The idea is that by adding a small size component to the network, we are able to effectively expand the number of components in the factorisation.
 
 In the next section we present the results of the experiments that assess the missing data imputation and compression capabilities of the proposed architectures. 
 
 
 \section{Experimental Results and Discussion}
 
-1.- Compare the error of the PCA and NN decompositions using pre-interpolated data.
-2.- Asses the quality of the missing values imputation process.
-3.- Asses the compression ability of the convolutional factorisation network.
+
+\subsection{Comparison of methodologies}
+We start by showing a comparison between PCA and NN factorisation methodologies for decomposing Sentinel-2 temporal series. The same temporally interpolated dataset was used in this comparison to ensure a fair comparison. Using the entire dataset, we applied the algorithm shown in Appendix A to remove clouds and shadows from the images. The missing values in the resulting image stacks was then filled using temporal interpolation. Linear interpolation was applied to each pixel along the temporal dimension. The 368 cleaned and interpolated tiles comprising the Australian Capital Territory were factorised using each methodology with different levels of truncation. Figure \ref{components_error} shows the reconstruction error bars for each methodology representing the averaged errors in the whole dataset. 
+
+\begin{figure}%
+    \includegraphics[width=14cm]{fig7.png}
+    \caption{Comparison between the basic the convolutional factorisation methodologies.}%
+    \label{components_error}%
+\end{figure}
+
+\subsection{Missing value imputation methodology assessment.}
+
+\subsection{Multispectral convolution compression methodology assessment.}
 
 
 \conclusions  %% \conclusions[modified heading if necessary]
