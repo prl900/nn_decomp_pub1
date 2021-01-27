@@ -29,17 +29,18 @@ class MF(nn.Module):
         return torch.matmul(self.cfs,self.cmps)
 
 
-df = pd.DataFrame(columns=["band_name","pca_mse","nn_mse"])
+df = pd.DataFrame(columns=["band_name","n_comps","pca_mse","nn_mse"])
 
-for j in range(7,18):
-    for i in range(10,25):
+#for j in range(7,18):
+for j in range(7,8):
+    #for i in range(10,25):
+    for i in range(10,12):
 
         ds = xr.open_dataset(f"/data/pca_act/{26*j+i:03d}_clean.nc")
         ds = ds.isel(time=(np.count_nonzero(~np.isnan(ds.nbart_blue.values), axis=(1,2)))>160000*.66)
 
         for band_name in ["nbart_red","nbart_green","nbart_blue",
                           "nbart_nir_1","nbart_nir_2", "nbart_swir_2","nbart_swir_3"]:
-            results = []
 
             stack = ds[band_name].astype(np.float32) #/ 1e4
 
@@ -47,76 +48,79 @@ for j in range(7,18):
             stack = stack.interpolate_na(dim='time', method='nearest', fill_value='extrapolate')
 
             stack = stack.values.reshape(-1, 400*400)
-            ncomps = 12
             
-            # PCA
-            pca = PCA(n_components=ncomps).fit(stack)
-            coeffs = pca.transform(stack)
-            pca_decomp = pca.inverse_transform(coeffs)
-            results.append(np.mean(np.square(pca_decomp/1e4-stack/1e4)))
+            for ncomps in [8,12,16]:
+                results = []
+                # PCA
+                pca = PCA(n_components=ncomps).fit(stack)
+                coeffs = pca.transform(stack)
+                pca_decomp = pca.inverse_transform(coeffs)
+                results.append(np.mean(np.square(pca_decomp/1e4-stack/1e4)))
 
-            ncoeffs = stack.shape[0]
-            npix = 160000
+                ncoeffs = stack.shape[0]
+                npix = 160000
 
-            net = MF(ncoeffs, ncomps, npix)
-            net.to(device)
-            tmean = np.mean(stack, axis=0)
-            target = torch.from_numpy(stack-tmean).float().to(device)
-            mse = nn.MSELoss()
+                net = MF(ncoeffs, ncomps, npix)
+                net.to(device)
+                tmean = np.mean(stack, axis=0)
+                target = torch.from_numpy(stack-tmean).float().to(device)
+                mse = nn.MSELoss()
 
-            opt = optim.AdamW(net.parameters(), lr=1.0)
-            n_epoch  = 1000
-            for epoch in range(n_epoch):
-                yhat = net()
-                loss = mse(yhat, target)
+                opt = optim.AdamW(net.parameters(), lr=1.0)
+                n_epoch  = 1000
+                for epoch in range(n_epoch):
+                    yhat = net()
+                    loss = mse(yhat, target)
 
-                net.zero_grad()
-                loss.backward()
-                opt.step()
+                    net.zero_grad()
+                    loss.backward()
+                    opt.step()
 
-            with torch.no_grad():
-                net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
-                net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
+                with torch.no_grad():
+                    net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
+                    net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
 
-            opt = optim.AdamW(net.parameters(), lr=0.001)
-            n_epoch  = 1000
-            for epoch in range(n_epoch):
-                yhat = net()
-                loss = mse(yhat, target)
+                opt = optim.AdamW(net.parameters(), lr=0.001)
+                n_epoch  = 1000
+                for epoch in range(n_epoch):
+                    yhat = net()
+                    loss = mse(yhat, target)
 
-                net.zero_grad()
-                loss.backward()
-                opt.step()
+                    net.zero_grad()
+                    loss.backward()
+                    opt.step()
 
-            with torch.no_grad():
-                net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
-                net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
-            
-            opt = optim.AdamW(net.parameters(), lr=0.0001)
-            n_epoch  = 1000
-            for epoch in range(n_epoch):
-                yhat = net()
-                loss = mse(yhat, target)
+                with torch.no_grad():
+                    net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
+                    net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
+                
+                opt = optim.AdamW(net.parameters(), lr=0.0001)
+                n_epoch  = 1000
+                for epoch in range(n_epoch):
+                    yhat = net()
+                    loss = mse(yhat, target)
 
-                net.zero_grad()
-                loss.backward()
-                opt.step()
+                    net.zero_grad()
+                    loss.backward()
+                    opt.step()
 
-            with torch.no_grad():
-                net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
-                net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
+                with torch.no_grad():
+                    net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
+                    net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
 
 
-            rec = net().cpu().detach().numpy()+tmean
-            results.append(np.nanmean(np.square(rec/1e4-stack/1e4)))
+                rec = net().cpu().detach().numpy()+tmean
+                results.append(np.nanmean(np.square(rec/1e4-stack/1e4)))
 
-            df = df.append({"band_name": band_name,
-                            "pca_mse":  results[0],
-                            "nn_mse":  results[1]}, ignore_index=True)
+                df = df.append({"band_name": band_name,
+                                "n_comps":  ncomps,
+                                "pca_mse":  results[0],
+                                "nn_mse":  results[1]}, ignore_index=True)
 
 
 df['pca_mse'] = df['pca_mse']*1e5
 df['nn_mse'] = df['nn_mse']*1e5
-df = df.groupby('band_name').mean()
+df = df.groupby(['band_name','n_comps']).mean()
 
-print(df.to_latex())
+cap = "MSE comparison of the reconstructed Sentinel-2 time series data using PCA and NN methodologies for different truncation levels."
+print(df.to_latex(label="components_error", caption=cap))
