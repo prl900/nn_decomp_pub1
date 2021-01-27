@@ -31,10 +31,8 @@ class MF(nn.Module):
 
 df = pd.DataFrame(columns=["band_name","n_comps","pca_mse","nn_mse"])
 
-#for j in range(7,18):
-for j in range(7,8):
-    #for i in range(10,25):
-    for i in range(10,12):
+for j in range(7,18):
+    for i in range(10,25):
 
         ds = xr.open_dataset(f"/data/pca_act/{26*j+i:03d}_clean.nc")
         ds = ds.isel(time=(np.count_nonzero(~np.isnan(ds.nbart_blue.values), axis=(1,2)))>160000*.66)
