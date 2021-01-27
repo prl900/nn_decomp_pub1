@@ -45,33 +45,64 @@ def nan_mse_loss(output, target):
     return loss
 
 
-print("i,j,band_name,n_comps,nn_mse,nnconv_mse")
-#for j in range(7,18):
+print("i,j,method,n_comps,band,nn_ind_bands_mse,nn_mse,nnconv_mse")
 for j in range(7,8):
-    #for i in range(10,25):
-    for i in range(10,11):
-
+    for i in range(10,25):
         ds = xr.open_dataset(f"/data/pca_act/{26*j+i:03d}_clean.nc")
         ds = ds.isel(time=(np.count_nonzero(~np.isnan(ds.nbart_blue.values), axis=(1,2)))>160000*.66)
-
-        stack = np.empty((0,400,400))
-        for band_name in ["nbart_red","nbart_green","nbart_blue",
-                          "nbart_nir_1","nbart_nir_2", "nbart_swir_2","nbart_swir_3"]:
-            results = []
-
-            band = ds[band_name].astype(np.float32).values
-            stack = np.append(stack, band, axis=0)
-            #stack = stack.reshape(-1,400*400)#/ 1e4
-
-        stack = stack.reshape(stack.shape[0], -1)
-
-        # NN missing data
+        
         for ncomps in [6,8,10,12,14,16,18,20]:
-            ncoeffs = stack.shape[0]
-            npix = 400
+            for band_name in ["nbart_red","nbart_green","nbart_blue",
+                              "nbart_nir_1","nbart_nir_2", "nbart_swir_2","nbart_swir_3"]:
+
+                stack = ds[band_name].astype(np.float32).values
+                stack = stack.reshape(stack.shape[0], -1)
+        
+                tmean = np.nanmean(stack, axis=0)
+                target = torch.from_numpy(stack-tmean).float().to(device)
+               
+                ncoeffs = stack.shape[0]
+                npix = 400
+
+                net = MF(ncoeffs, ncomps, npix)
+                net.to(device)
+                opt = optim.AdamW(net.parameters(), lr=1.0)
+                n_epoch  = 500
+                for epoch in range(n_epoch):
+                    yhat = net()
+                    loss = nan_mse_loss(yhat, target)
+
+                    net.zero_grad()
+                    loss.backward()
+                    opt.step()
+
+                opt = optim.AdamW(net.parameters(), lr=0.001)
+                n_epoch  = 500
+                for epoch in range(n_epoch):
+                    yhat = net()
+                    loss = nan_mse_loss(yhat, target)
+
+                    net.zero_grad()
+                    loss.backward()
+                    opt.step()
+
+                rec = net().cpu().detach().numpy()+tmean
+                print(f"{i},{j},nn_ss,{ncomps},{band_name},{np.nanmean(np.square(rec/10e4-stack/10e4))}", flush=True)
+
+            stack = np.empty((0,400,400))
+            for band_name in ["nbart_red","nbart_green","nbart_blue",
+                              "nbart_nir_1","nbart_nir_2", "nbart_swir_2","nbart_swir_3"]:
+
+                band = ds[band_name].astype(np.float32).values
+                stack = np.append(stack, band, axis=0)
+
+            stack = stack.reshape(stack.shape[0], -1)
 
             tmean = np.nanmean(stack, axis=0)
             target = torch.from_numpy(stack-tmean).float().to(device)
+
+            ncoeffs = stack.shape[0]
+            npix = 400
 
             net = MF(ncoeffs, ncomps, npix)
             net.to(device)
@@ -85,12 +116,6 @@ for j in range(7,8):
                 loss.backward()
                 opt.step()
 
-            """
-            with torch.no_grad():
-                net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
-                net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
-            """
-
             opt = optim.AdamW(net.parameters(), lr=0.001)
             n_epoch  = 500
             for epoch in range(n_epoch):
@@ -101,15 +126,14 @@ for j in range(7,8):
                 loss.backward()
                 opt.step()
 
-            """
-            with torch.no_grad():
-                net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
-                net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
-            """
-
             rec = net().cpu().detach().numpy()+tmean
-            results.append(np.nanmean(np.square(rec-stack)))
-
+            print(f"{i},{j},nn_ms,{ncomps},all,{np.nanmean(np.square(rec/10e4-stack/10e4))}", flush=True)
+            
+            t_dim = ds.time.shape[0]
+            for band_pos, band_name in enumerate(["nbart_red","nbart_green","nbart_blue",
+                              "nbart_nir_1","nbart_nir_2", "nbart_swir_2","nbart_swir_3"]):
+                print(f"{i},{j},nn_ms,{ncomps},{band_name},{np.nanmean(np.square(rec[band_pos*t_dim:(band_pos+1)*t_dim]/10e4-stack[band_pos*t_dim:(band_pos+1)*t_dim]/10e4))}", flush=True)
+            
             net = MFConv(ncoeffs, ncomps, npix)
             net.to(device)
             opt = optim.AdamW(net.parameters(), lr=0.1)
@@ -122,12 +146,6 @@ for j in range(7,8):
                 loss.backward()
                 opt.step()
 
-            """
-            with torch.no_grad():
-                net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
-                net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
-            """
-
             opt = optim.AdamW(net.parameters(), lr=0.001)
             n_epoch  = 500
             for epoch in range(n_epoch):
@@ -138,13 +156,10 @@ for j in range(7,8):
                 loss.backward()
                 opt.step()
 
-            """
-            with torch.no_grad():
-                net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
-                net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
-            """
-
             rec = net().cpu().detach().numpy()+tmean
-            results.append(np.nanmean(np.square(rec-stack)))
-
-            print(f"{i},{j},{band_name},{n_comps},{results[0]},{results[1]}", flush=True)
+            print(f"{i},{j},nn_msc,{ncomps},all,{np.nanmean(np.square(rec/10e4-stack/10e4))}", flush=True)
+            
+            t_dim = ds.time.shape[0]
+            for band_pos, band_name in enumerate(["nbart_red","nbart_green","nbart_blue",
+                              "nbart_nir_1","nbart_nir_2", "nbart_swir_2","nbart_swir_3"]):
+                print(f"{i},{j},nn_msc,{ncomps},{band_name},{np.nanmean(np.square(rec[band_pos*t_dim:(band_pos+1)*t_dim]/10e4-stack[band_pos*t_dim:(band_pos+1)*t_dim]/10e4))}", flush=True)
