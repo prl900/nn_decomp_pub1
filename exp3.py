@@ -45,7 +45,7 @@ def nan_mse_loss(output, target):
     return loss
 
 
-print("i,j,method,n_comps,band,nn_ind_bands_mse,nn_mse,nnconv_mse")
+print("i,j,method,n_comps,band,mse")
 for j in range(7,8):
     for i in range(10,25):
         ds = xr.open_dataset(f"/data/pca_act/{26*j+i:03d}_clean.nc")
