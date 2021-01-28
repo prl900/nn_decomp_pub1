@@ -271,11 +271,11 @@ For comparing the compression ratios achieved with each methodology, we added th
 \begin{table}[]
 \begin{tabular}{lcccc|c}
 \hline
-Decomposition methodology               & \multicolumn{1}{l}{Number of networks} & \multicolumn{1}{l}{Size of coefficients matrix} & \multicolumn{1}{l}{Size of PCs matrix} & \multicolumn{1}{l|}{Size of convolution kernel} & \multicolumn{1}{l}{Total size in MB {[}float32{]}} \\ \hline
+Decomposition methodology               & \multicolumn{1}{l}{Networks} & \multicolumn{1}{l}{Coefficients matrix} & \multicolumn{1}{l}{PCs matrix} & \multicolumn{1}{l|}{Conv. kernel} & \multicolumn{1}{l}{Size in MB {[}float32{]}} \\ \hline
 Raw data (ref)                          & -                                      & -                                               & -                                      & -                                               & 147.40                                             \\
 Single band basic NN (6 PCs)            & 7                                      & 138x6                                           & 400x400x6                              & -                                               & 6.41                                               \\
 Multispectral basic NN (16 PCs)         & 1                                      & 7x138x16                                        & 400x400x16                             & -                                               & 2.46                                               \\
-Multispectral convolutional NN (12 PCs) & 1                                      & 7x138x24                                        & 404x404x12                             & 5x5x12x24                                       & 1.90                                               \\ \hline
+Multispectral conv. NN (12 PCs) & 1                                      & 7x138x24                                        & 404x404x12                             & 5x5x12x24                                       & 1.90                                               \\ \hline
 \end{tabular}
 \end{table}
 
