@@ -281,9 +281,9 @@ Multispectral conv. NN (12 PCs) & 1                                      & 7x138
 
 Of all the elements in the NN decompostion architectures, the matrix containing the principal components is the largest by several orders of magnitude. Reducing the number of components is therefore the most efficient way of increasing the compression ratio. The introduction of the convolution kernel in the network accounted for a reduction of approximately 4 principal components compared to the basic methodology for the same level of error. In absolute terms, considering the size of the raw data and the values in this example, compressing the single band images with this methodology results in a compression ratio of 23. If the same methodology is applied to the multispectral data the ratio is 60 and the version including the convolution operation increases this ratio to nearly 78 times smaller than the original data.
 
-As we pointed out, the principal components in the multispectral decomposition are shared between the bands. Features that are common to several spectral bands can be represented through the same principal component resulting in more efficient representation than in per band decompositions. Interpreting the functionality convolution kernel is not entirely obvious, but its functionality in this  to expand the number of  
+As we pointed out, the principal components in the multispectral decomposition are shared between the bands. Features that are common to several spectral bands can be represented through the same principal component resulting in more efficient representations than the case of individual, per band, decompositions. Although it is not straight forward to give a physically interpretable explanation to the functionality of the convolution operation in the network we can analyse this process mathematically and draw some conclusions. From a mathematical point of view, the kernel operation combines spatially close pixels across the principal components. During training, the kernel weight values are tuned to identify combinations that generate new principal components that minimise the reconstruction error. 
 
-
+A possible interpretation of the effectiveness in the basis expansion performed by the convolution kernel comes from the characteristic spectral responses of the Earth surface. Certain types of soils, vegetation or moisture conditions respond differently at different parts of the spectrum. In remote sensing, known spectral response curves allow the identification of the type of soil or water content on the land's surface. We think that the convolution kernel in this case, learns to transform the signal captured in the different components and generate representations that are more targeted to recreate the variability across the spectral bands. 
 
 \begin{figure}
     \includegraphics[width=10cm]{fig9.png}
@@ -291,12 +291,7 @@ As we pointed out, the principal components in the multispectral decomposition a
     \label{compression_cmp}%
 \end{figure}
 
-On average, the multispectral decompostion is around 2.6 times more efficient than the single band decompostion and this ratio increases to 3.5 in the case of introducing the convolution operation in the network. 
-
-
-
-
-and the reconstruction error varies between bands. Certain types of soils, vegetation or moisture conditions are represented very differently by spectral bands and these unique features are not well represented by the principal components. To assess the quality of the multispectral decomposition and the variability of the reconstruction error for the different bands, we compare the MSE of the reconstructed images for the multispectral and single band decompositions using the Sentinel-2 dataset. 
+and the reconstruction error varies between bands. To assess the quality of the multispectral decomposition and the variability of the reconstruction error for the different bands, we compare the MSE of the reconstructed images for the multispectral and single band decompositions using the Sentinel-2 dataset. 
 
 In the next experiment, we assess the decompostion NN architecture that includes the convolutional layer, as shown in Figure \ref{factorisation_methods}. To run the experiment we chose a 5x5 kernel that expanded the number of principal components from 12 to 24. The elements of this convolution kernel were set during the training process of the network to identify patterns and relationships between the input spectral bands. Using a similar representation as previously, Figure \ref{factorisation_methods} compares the reconstruction error of the basic and convolutional NN architectures fixing the truncation to 12 components in both cases. Note that the 12 components are internally transformed into 24 by the convolution kernel in the second case.
 
