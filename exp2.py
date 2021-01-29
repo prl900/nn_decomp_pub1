@@ -52,30 +52,6 @@ for j in range(7,18):
 
         ds = xr.open_dataset(f"/data/pca_act/{26*j+i:03d}_clean.nc")
         ds = ds.isel(time=(np.count_nonzero(~np.isnan(ds.nbart_blue.values), axis=(1,2)))>160000*.66)
-        """
-        #ds = xr.open_dataset("Murrumbidgee_near_Bundure__MUR_B3.nc")
-        #ds = ds.isel(x=slice(400,800), y=slice(0,400))
-        ds = xr.open_dataset(f"/data/pca_act/000_clean.nc")
-
-        ids = ds.where((ds.nbart_blue - ds.nbart_blue.quantile(0.25, dim='time'))<1000)
-        ids = ids.isel(time=(np.count_nonzero(~np.isnan(ids.nbart_blue.values), axis=(1,2)))>400*400*.66)
-        ids = ids.rolling(time=7, min_periods=3, center=True).median()
-        ids = ids.reindex({"time": ds.time})
-        ids = ids.interpolate_na(dim='time', method='nearest', fill_value='extrapolate')
-
-        mask = (ds.nbart_blue - ids.nbart_blue) > 100 + ids.nbart_blue/2
-        mask += (ds.nbart_nir_2 - ids.nbart_nir_2) < -600 + ids.nbart_nir_2/16
-        mask = mask.values
-
-        for t in range(mask.shape[0]):
-            mask[t] = remove_small_objects(mask[t], 9)
-            mask[t] = dilation(mask[t], disk(9))
-
-        ti_nan = (np.count_nonzero(mask, axis=(1,2)))<.66*160000
-        ds = ds.where(~mask).isel(time=ti_nan)
-
-        mask = mask[ti_nan]
-        """
 
         patch_hsize = 40
         mask = ds.nbart_blue.isnull().values
@@ -114,51 +90,7 @@ for j in range(7,18):
             pca_decomp[~pmask.reshape(-1,160000)]=np.nan
 
             results.append(np.nanmean(np.square(pca_decomp-stack)))
-            #print("PCA control gaps", np.nanmean(np.square(pca_decomp-stack)))
 
-            """
-            # NN interpolated
-            ncomps = 12
-            ncoeffs = stack.shape[0]
-            npix = 160000
-
-            net = MF(ncoeffs, ncomps, npix)
-            net.to(device)
-            tmean = np.nanmean(istack, axis=0)
-            target = torch.from_numpy(istack-tmean).float().to(device)
-
-            opt = optim.AdamW(net.parameters(), lr=1.0)
-            n_epoch  = 1000
-            for epoch in range(n_epoch):
-                yhat = net()
-                loss = nan_mse_loss(yhat, target)
-
-                net.zero_grad()
-                loss.backward()
-                opt.step()
-
-            with torch.no_grad():
-                net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
-                net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
-
-            opt = optim.AdamW(net.parameters(), lr=0.001)
-            n_epoch  = 500
-            for epoch in range(n_epoch):
-                yhat = net()
-                loss = nan_mse_loss(yhat, target)
-
-                net.zero_grad()
-                loss.backward()
-                opt.step()
-
-            with torch.no_grad():
-                net.cfs.data = net.cfs.data*torch.norm(net.cmps, dim=1).data/20
-                net.cmps.data = net.cmps.data/torch.norm(net.cmps, dim=1).data[:,None]*20
-
-
-            rec2 = net().cpu().detach().numpy()+tmean
-            results.append(np.nanmean(np.square(rec2-istack)))
-            """
             results.append(0)
 
             # NN missing data
