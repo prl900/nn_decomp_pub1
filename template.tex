@@ -72,21 +72,27 @@ TEXT
 Remote sensing provides valuable information about the Earth with increasing detail in the spatial, spectral and temporal domains. Due to the size of current remote sensing collections, processing the data requires accessing large amounts of storage and computing resources, making this task difficult and expensive. In the case of studying land processes, only the reflectance component coming from the Earth’s surface is used, and all other effects originating in the atmosphere, such as clouds or shadows, can be considered noise contaminating the land’s signal. Changes at the land surface typically happen at lower temporal scales than those in the atmosphere, suggesting that land dynamics may be described using a lower-dimensional space than the original data. This idea motivates the exploration of methodologies that exploit the inherent redundancies in the data and find efficient representations that capture the variability in the signal coming just from the land.
 
 1 The PCA approach
-From an algebraic perspective, we can say that there exists a low-rank representation of the Earth's surface signal that captures most of its variability but is significantly smaller than the original representation. This approach was original explored using Principal Component Analysis (PCA) to compress multispectral remote sensing images and still constitutes an active area of research \citep{du2007hyperspectral,mei2018low,bascones2018hyperspectral}. However, there are two important disadvantages to the use of PCA.
+From an algebraic perspective, we can say that there exists a low-rank representation of the Earth's surface signal that captures most of its variability but is significantly smaller than the original representation. This approach was original explored using Principal Component Analysis (PCA) to compress multispectral remote sensing images and its application in remote sensing is still an active area of research \citep{du2007hyperspectral,mei2018low,bascones2018hyperspectral}. However, there are important disadvantages to the use of PCA in remote sensing applications.
 
 Firstly, PCA is limited by its inability to work with missing values. As discussed before, remote sensing images representing the land surface, are often contaminated with atmospheric effects that need to be removed, creating gaps of missing data in the images. There are different approaches for dealing with missing values before applying PCA. Many methodologies have been proposed for filling the gaps, which can be classified as spatial-, spectral-, and temporal-based approaches, depending on the dimension used to impute the missing values \citep{shen2015missing}. 
 
-Temporal-based methodologies are best suited for satellite missions with revisit times of a few days \citep{shen2015missing}. This kind of time frames ensures enough variability in the atmospheric conditions but normally limited changes in the surface reflectance signal, when considering consecutive images. The most common approach in this category consists in applying regression or interpolation methods along the temporal dimension to impute the missing values \citep{zeng2013recovering,zhang2014missing,zeng2014reconstructing}. Therefore, the resulting PCA decomposition results will depend on the chosen missing data imputation process. Regardless of the methodology, the process of imputing missing values introduces artificial, non-observed values in the original signal, leading to errors and biases in the resulting decomposition.
-
-
-
-
-such as temporal aggregation of pixels, assigning fixed values to the missing data, or using other forms of interpolation through space or time. Therefore, 
+Temporal-based methodologies are best suited for satellite missions with revisit times of a few days \citep{shen2015missing}. This type of time frame ensures that the changes in the surface reflectance signal between any two consecutive images are small but the atmospheric conditions present a large variability. The most common approach for this type of data consists in applying regression or interpolation methods along the temporal dimension to impute the missing values \citep{zeng2013recovering,zhang2014missing,zeng2014reconstructing}. 
 
 
 2 The extension to multidimensional or tensor approaches
-Compression of hyperspectral remote sensing images by tensor approach. High order Singular Value Decomposition to compress images has been explored 
-\citep{zhang2015compression}
+
+The 4-dimensional nature of time series of multispectral remote sensing data is well suited for tensor decomposition techniques \citep{kolda2009tensor}. These techniques have been explored in the context of hyperspectral remote sensing image compression \citep{zhang2015compression}. Internally, most of the methodologies for decomposing multidimensional arrays use high order singular value decomposition (HOSVD) to perform the factorisations. HOSVD basically consists in reordering or 'unfolding' the tensor data into its matrix form and applying traditional linear algebra algorithms to compute the decomposition of this matrix. Different patterns for unfolding the original tensor into a matrix form lead to large differences in the quality of the decomposition. This is largely dependent on the spectral and spatial correlations in the original tensor and how well these are represented in its matrix form. Regardless of the dimensionality used to represent the data, the factorisation methods use traditional linear algebra algorithms to compute the decomposition. 
+
+factorisation relies on optimisation 
+
+
+
+Therefore, the results of PCA decomposition will depend on the chosen missing data imputation process. Regardless of the methodology, the process of imputing missing values introduces artificial, non-observed values in the original signal, leading to errors and biases in the resulting decomposition.
+
+The second disadvantage of PCA is 
+
+
+
 
 3 Low-rank as a convex optimisation problem
 The concept of using low-rank representations for image completion has been recently proposed \citep{long2019low} and later applied to remote sensing images for the specific case of missing data reconstruction \citep{cheng2019missing}. This line of research is based on the definition of mathematical models that are solved using optimisation methods. The solution is normally constrained defining different regularisation terms to reduce the dimensionality of the solution or induce sparsity in the decomposition factors.
